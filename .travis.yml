@@ -1,0 +1,26 @@
+# R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
+
+language: r
+# As long as we are in development stage only the relase version will be checked
+# Uncomment below once uploaded to CRAN
+#r:
+#  - oldrel
+#  - release
+#  - devel
+  
+cache: packages
+# As long as we are in the development stage warnings are not considered errors
+warnings_are_errors: false
+
+after_success:
+  - R CMD INSTALL .
+  - Rscript -e 'pkgdown::build_site()'
+
+deploy:
+  provider: pages
+  skip-cleanup: true
+  github-token: $GITHUB_PAT
+  keep-history: false
+  local-dir: docs
+  on:
+    branch: master
