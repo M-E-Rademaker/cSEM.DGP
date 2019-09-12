@@ -4,10 +4,10 @@
 #' is a limit of ten constructs.
 #'
 #' @param .structural A matrix mimicking the structural relationship
-#'   between constructs. Up to 10 constructs are supported.
-#' @param gamma A (10 x 10) matrix containing the path coefficients.
+#'   between constructs. Up to 8 constructs are supported.
+#' @param gamma A (8 x 8) matrix containing the path coefficients.
 #'
-#' @return A (10 x 10) matrix of construct correlations.
+#' @return A (8 x 8) matrix of construct correlations.
 #'
 #' @keywords internal
 

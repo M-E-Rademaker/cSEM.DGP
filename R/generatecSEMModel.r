@@ -41,7 +41,7 @@ generatecSEMModel <- function(
   params <- as.list(list(...))
   param_names <- names(params)
 
-  xx  <- parseModel(model)
+  xx  <- cSEM::parseModel(.model)
   ss  <- xx$structural2
   m   <- xx$measurement2
   e   <- xx$error_cor2

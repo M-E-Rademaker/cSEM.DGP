@@ -7,13 +7,13 @@
 generateConstructCor(path_matrix = path_matrix, gamma = NULL)
 }
 \arguments{
-\item{gamma}{A (10 x 10) matrix containing the path coefficients.}
+\item{gamma}{A (8 x 8) matrix containing the path coefficients.}
 
 \item{.structural}{A matrix mimicking the structural relationship
-between constructs. Up to 10 constructs are supported.}
+between constructs. Up to 8 constructs are supported.}
 }
 \value{
-A (10 x 10) matrix of construct correlations.
+A (8 x 8) matrix of construct correlations.
 }
 \description{
 Calculate the construct correlation matrix correlation. Currently, there
