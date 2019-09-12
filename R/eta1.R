@@ -435,5 +435,3 @@ eta1eta10 <- function(gamma){
   gamma[10,9]*gamma[3,1]*gamma[4,3]*gamma[5,4]*gamma[6,5]*gamma[7,6]*gamma[8,7]*gamma[9,8] +
   gamma[10,9]*gamma[2,1]*gamma[3,2]*gamma[4,3]*gamma[5,4]*gamma[6,5]*gamma[7,6]*gamma[8,7]*gamma[9,8]
 }
-
-
