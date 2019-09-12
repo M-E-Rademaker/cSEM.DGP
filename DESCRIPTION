@@ -1,0 +1,30 @@
+Package: cSEM.DGP
+Title: Generate indicator correlation matrices for structural equation models
+  based on parameters given by the user.
+Version: 0.0.0.9000
+Date: 2019-04-24
+Authors@R: c(person(given = "Manuel", family = "Rademaker",
+                    role  = c("aut", "cre"),
+                    email = "manuel.rademaker@uni-wuerzburg.de",
+                    comment = c(ORCID = "0000-0002-8902-3561")),
+             person(given = "Tamara", family = "Schamberger",
+                    role  = c("aut"),
+                    email = "tamara.schamberger@uni-wuerzburg.de"))
+Maintainer: Manuel Rademaker <manuel.rademaker@uni-wuerzburg.de>
+Depends: R (>= 3.5.0)
+Description: Generate population indicator correlation matrices for a given structural model
+  based on the parameter given by the user. The package makes use of lavaan's 
+  labelling cababilities by allowing variable parameters. 
+  User may replace a given parameter in i.e. the structural model
+  by a symbolic name and assign values to that name. These values will be used
+  to generate Sigma matrices for all possible combinations of these values with
+  the remaining fixed parameters.
+BugReports: https://github.com/M-E-Rademaker/cSEM.DGP/issues
+URL: https://github.com/M-E-Rademaker/cSEM.DGP
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Imports: cSEM,
+  matrixcalc
+RoxygenNote: 6.1.1
+Roxygen: list(markdown = TRUE, roclets = c("rd", "namespace", "collate"))
