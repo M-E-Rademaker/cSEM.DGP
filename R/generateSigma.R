@@ -97,9 +97,9 @@ generateSigma <- function(
   path_matrix <- model$structural2
 
   # Define Gamma (for 10 constructs)
-  gamma       <- matrix(0, nrow = 10, ncol = 10,
-                        dimnames = list(c("eta1","eta2","eta3","eta4","eta5","eta6","eta7","eta8","eta9","eta10"),
-                                        c("eta1","eta2","eta3","eta4","eta5","eta6","eta7","eta8","eta9","eta10")))
+  gamma       <- matrix(0, nrow = 8, ncol = 8,
+                        dimnames = list(c("eta1","eta2","eta3","eta4","eta5","eta6","eta7","eta8"),
+                                        c("eta1","eta2","eta3","eta4","eta5","eta6","eta7","eta8")))
   # Insert the Defined Path Coefficients
   gamma[1:ncol(path_matrix), 1:nrow(path_matrix)] <- path_matrix
 
