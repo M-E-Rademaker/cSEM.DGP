@@ -1,6 +1,5 @@
 Package: cSEM.DGP
 Title: Generate indicator correlation matrices for structural equation models
-  based on parameters given by the user.
 Version: 0.0.0.9000
 Date: 2019-04-24
 Authors@R: c(person(given = "Manuel", family = "Rademaker",
@@ -26,5 +25,6 @@ Encoding: UTF-8
 LazyData: true
 Imports: cSEM,
   matrixcalc
+Remotes: M-E-Rademaker/cSEM
 RoxygenNote: 6.1.1
 Roxygen: list(markdown = TRUE, roclets = c("rd", "namespace", "collate"))

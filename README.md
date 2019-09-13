@@ -1,11 +1,12 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# cSEM.DGP: Generate indicator correlation matrices
+# cSEM.DGP: Generate indicator correlation matrices for structural equation models
 
-<!-- [![CRAN status](https://www.r-pkg.org/badges/version/cSEM.DGP)](https://cran.r-project.org/package=cSEM.DGP) -->
-
-<!-- [![Build Status](https://travis-ci.com/M-E-Rademaker/cSEM.DGP.svg?branch=master)](https://travis-ci.com/M-E-Rademaker/cSEM.DGP) -->
+[![CRAN
+status](https://www.r-pkg.org/badges/version/cSEM.DGP)](https://cran.r-project.org/package=cSEM.DGP)
+[![Build
+Status](https://travis-ci.com/M-E-Rademaker/cSEM.DGP.svg?branch=master)](https://travis-ci.com/M-E-Rademaker/cSEM.DGP)
 
 WARNING: THIS IS WORK IN PROGRESS. Use the package with caution and
 please report bugs to [the package
