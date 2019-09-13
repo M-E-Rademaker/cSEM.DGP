@@ -9,7 +9,7 @@
 #' For the structural model, values are path coeffcients. For the measurement
 #' model values in each equation are taken to be loadings, if the concept is modeled as a
 #' common factor (`=~`). If the concept is modeled as a composite (`<~`) values are
-#' interpreted as weights!
+#' interpreted as (unscaled) weights!
 #' In this case the correlation between indicators needs to
 #' be set as well. See the example below.
 #'
