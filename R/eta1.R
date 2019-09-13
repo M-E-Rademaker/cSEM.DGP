@@ -1,3 +1,7 @@
+#' Calculating the covariances between the first construct and the other
+#' constructs;
+#' @noRd
+
 eta1eta2 <- function(gamma){
 
 gamma[2,1]

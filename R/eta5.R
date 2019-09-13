@@ -1,3 +1,9 @@
+#' Calculating the covariances between the fourth construct and the other
+#' constructs;
+#' Note: Since the covariance is a symmetric function, the computation starts
+#' with Cov(eta5, eta6); the remaining covariances are computed in
+#' eta1.R, eta2.R, eta3.R and eta4.R
+#' @noRd
 eta5eta6 <- function(gamma){
 
   gamma[5,1]*gamma[6,1] + gamma[2,1]*gamma[5,2]*gamma[6,1] +

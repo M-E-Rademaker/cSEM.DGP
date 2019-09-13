@@ -1,3 +1,9 @@
+#' Calculating the covariances between the second construct and the other
+#' constructs.
+#' Note: Since the covariance is a symmetric function and Cov(eta1,eta2)
+#' is computed in the file eta1.R, the calculation starts
+#' with Cov(eta2,eta3).
+#' @noRd
 eta2eta3 <- function(gamma){
 
   gamma[2,1]*gamma[3,1] + gamma[3,2]
