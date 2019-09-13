@@ -1,7 +1,7 @@
-#' Generate indicator correlation matrix
+#' Generate the indicator correlation matrix
 #'
-#' Generates a population indicator correlation matrix for a given
-#' structural equation model based on the parameter given by the user.
+#' Generates the indicator correlation matrix based on the parameters of a
+#' structural equation model in [lavaan model syntax][lavaan::model.syntax].
 #'
 #' @usage generateSigma(
 #'  .model                    = NULL,
@@ -31,11 +31,13 @@
 #'
 #' Sigma <- generateSigma(model)
 #' Sigma
-
 generateSigma <- function(
   .model                    = NULL,
   .handle_negative_definite = c("stop", "ignore")
-  ) {
+) {
+  ## Match arguments
+  .handle_negative_definite <- match.arg(.handle_negative_definite)
+
   ## Get relevant objects
   model     <- cSEM::parseModel(.model)
   con_type  <- model$construct_type
@@ -127,7 +129,7 @@ generateSigma <- function(
       stop("The indicator correlation matrix is not semi-positive definite.",
            call. = FALSE)
     }
-  } else{
+  } else {
     indicator_cor
   }
 }
