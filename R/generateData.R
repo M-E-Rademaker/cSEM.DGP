@@ -26,7 +26,7 @@
 #' @usage generateData(
 #'  .model                    = NULL,
 #'  .empirical                = FALSE,
-#'  .handle_negative_definite = c("stop", "ignore"),
+#'  .handle_negative_definite = c("stop", "drop"),
 #'  .return_type              = c("data.frame", "matrix", "cor"),
 #'  .N                        = 200,
 #'  ...
@@ -36,7 +36,7 @@
 #' @param .empirical Logical. If TRUE, mu and Sigma of the normal distribution
 #'   specify the empirical not the population mean and covariance matrix.
 #' @param .handle_negative_definite Character string. How should negative definite
-#'   indicator correlation matrices be handled? One of `"stop"` or `"ignore"` in which case
+#'   indicator correlation matrices be handled? One of `"stop"` or `"drop"` in which case
 #'   an `NA` is produced. Defaults to `"stop"`.
 #' @param .N Integer. The number of observations to generate. Ignored if
 #'   `return.type = "cor"`. Defaults to `200`.
@@ -95,7 +95,7 @@
 generateData <- function(
   .model                    = NULL,
   .empirical                = FALSE,
-  .handle_negative_definite = c("stop", "ignore"),
+  .handle_negative_definite = c("stop", "drop"),
   .return_type              = c("data.frame", "matrix", "cor"),
   .N                        = 200,
   ...
@@ -119,6 +119,7 @@ generateData <- function(
       sigma_list
     }
   } else {
+    sigma_list <- Filter(Negate(anyNA), sigma_list)
     data_list <- lapply(sigma_list, function(x) {
       out <- MASS::mvrnorm(.N, mu = rep(0, nrow(x)), Sigma = x, empirical = .empirical)
       if(return_type == "data.frame") {

@@ -6,14 +6,14 @@
 \usage{
 generateSigma(
  .model                    = NULL,
- .handle_negative_definite = c("stop", "ignore")
+ .handle_negative_definite = c("stop", "drop")
  )
 }
 \arguments{
 \item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}}
 
 \item{.handle_negative_definite}{Character string. How should negative definite
-Sigma matrices be handeled? One of \code{"stop"} or \code{"ignore"} in which case
+Sigma matrices be handeled? One of \code{"stop"} or \code{"drop"} in which case
 an \code{NA} is produced. Defaults to \code{"stop"}.}
 }
 \value{

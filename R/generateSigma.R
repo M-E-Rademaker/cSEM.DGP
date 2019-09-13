@@ -5,12 +5,12 @@
 #'
 #' @usage generateSigma(
 #'  .model                    = NULL,
-#'  .handle_negative_definite = c("stop", "ignore")
+#'  .handle_negative_definite = c("stop", "drop")
 #'  )
 #'
 #' @param .model A model in [lavaan model syntax][lavaan::model.syntax]
 #' @param .handle_negative_definite Character string. How should negative definite
-#'   Sigma matrices be handeled? One of `"stop"` or `"ignore"` in which case
+#'   Sigma matrices be handeled? One of `"stop"` or `"drop"` in which case
 #'   an `NA` is produced. Defaults to `"stop"`.
 #
 #' @return A K by K matrix of indicator correlations. K is the number of indicators
@@ -19,7 +19,7 @@
 
 generateSigma <- function(
   .model                    = NULL,
-  .handle_negative_definite = c("stop", "ignore")
+  .handle_negative_definite = c("stop", "drop")
 ) {
   ## Match arguments
   .handle_negative_definite <- match.arg(.handle_negative_definite)
@@ -28,8 +28,6 @@ generateSigma <- function(
   model     <- cSEM::parseModel(.model)
   con_type  <- model$construct_type
   Lambda    <- t(model$measurement)
-  error_cor <- model$error_cor2
-  diag(error_cor) <- rep(1, nrow(error_cor))
   Theta     <- model$error_cor
 
   ## Modify and fill Lambda
@@ -109,7 +107,7 @@ generateSigma <- function(
 
   # Check if semi-positve definite
   if (!matrixcalc::is.positive.semi.definite(indicator_cor)) {
-    if(.handle_negative_definite == "ignore") {
+    if(.handle_negative_definite == "drop") {
       NA
     } else if(.handle_negative_definite == "stop") {
       stop("The indicator correlation matrix is not semi-positive definite.",

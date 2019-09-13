@@ -7,7 +7,7 @@
 generateData(
  .model                    = NULL,
  .empirical                = FALSE,
- .handle_negative_definite = c("stop", "ignore"),
+ .handle_negative_definite = c("stop", "drop"),
  .return_type              = c("data.frame", "matrix", "cor"),
  .N                        = 200,
  ...
@@ -20,7 +20,7 @@ generateData(
 specify the empirical not the population mean and covariance matrix.}
 
 \item{.handle_negative_definite}{Character string. How should negative definite
-indicator correlation matrices be handled? One of \code{"stop"} or \code{"ignore"} in which case
+indicator correlation matrices be handled? One of \code{"stop"} or \code{"drop"} in which case
 an \code{NA} is produced. Defaults to \code{"stop"}.}
 
 \item{.return_type}{Character string. One of \code{"data.frame"}, \code{matrix} or \code{"cor"}
