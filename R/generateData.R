@@ -20,8 +20,8 @@
 #'  .model                    = NULL,
 #'  .empirical                = FALSE,
 #'  .handle_negative_definite = c("stop", "ignore"),
-#'  .N                        = 200,
 #'  .return_type              = c("data.frame", "matrix", "cor"),
+#'  .N                        = 200,
 #'  ...
 #'  )
 #'
@@ -35,6 +35,9 @@
 #'   `return.type = "cor"`. Defaults to `200`.
 #' @param .return_type Character string. One of `"data.frame"`, `matrix` or `"cor"`
 #'   in which case the indicator correlation matrix is returned. Defaults to `".data.frame"`.
+#' @param ... `"name" = values` pairs. `"name"` is a character value giving the
+#'   label used for the parameter of interest. `values` is a numeric vector of
+#'   values to use for the paramter given by `"name"`.
 #'
 #' @return The generated data. Either as a data.frame (`return_type = "data.frame"`),
 #'   a numeric matrix (`return.type = "matrix"`),
@@ -80,7 +83,7 @@ generateData <- function(
                        .handle_negative_definite = handle_negative_definite)
 
   ## Get relevant objects
-  if(.return_type == "cor") {
+  if(return_type == "cor") {
     if(length(sigma_list) == 1) {
       sigma_list[[1]]
     } else {
@@ -89,7 +92,7 @@ generateData <- function(
   } else {
     data_list <- lapply(sigma_list, function(x) {
       out <- MASS::mvrnorm(.N, mu = rep(0, nrow(x)), Sigma = x, empirical = .empirical)
-      if(.return_type == "data.frame") {
+      if(return_type == "data.frame") {
         out <- as.data.frame(out)
       }
       out

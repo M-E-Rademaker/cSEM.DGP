@@ -4,5 +4,6 @@
 ^CONTRIBUTING\.md$
 ^Temp$
 ^README\.Rmd$
+^README\.html$
 ^NEWS.
 ^\.travis\.yml

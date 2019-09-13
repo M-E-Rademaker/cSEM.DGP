@@ -8,8 +8,8 @@ generateData(
  .model                    = NULL,
  .empirical                = FALSE,
  .handle_negative_definite = c("stop", "ignore"),
- .N                        = 200,
  .return_type              = c("data.frame", "matrix", "cor"),
+ .N                        = 200,
  ...
  )
 }
@@ -28,6 +28,10 @@ in which case the indicator correlation matrix is returned. Defaults to \code{".
 
 \item{.N}{Integer. The number of observations to generate. Ignored if
 \code{return.type = "cor"}. Defaults to \code{200}.}
+
+\item{...}{\code{"name" = values} pairs. \code{"name"} is a character value giving the
+label used for the parameter of interest. \code{values} is a numeric vector of
+values to use for the paramter given by \code{"name"}.}
 }
 \value{
 The generated data. Either as a data.frame (\code{return_type = "data.frame"}),
