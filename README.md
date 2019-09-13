@@ -32,8 +32,8 @@ devtools::install_github("M-E-Rademaker/cSEM")
 ## Purpose
 
 Generate data for structural equation models including up to 8
-constructs. Generation is based parameter values given in [lavaan model
-syntax](http://lavaan.ugent.be/tutorial/syntax1.html).
+constructs. Generation is based on parameter values given in [lavaan
+model syntax](http://lavaan.ugent.be/tutorial/syntax1.html).
 
 In addition to supplying numeric values, variable values for parameters
 are allowed. To achieve this, the package makes use of
@@ -49,18 +49,14 @@ the remaining fixed parameters.
 
 Simply write your model as usual in lavaan model syntax. Add a fixed
 numeric value for each parameter. Note, currently you must either set
-all paramters, or none. The type of output can be choosen. Either a
+all paramters or none. The type of output can be choosen. Either a
 data.frame (`return_type = "data.frame"`, the default), a numeric matrix
 (`return.type = "matrix"`), or a correlation matrix (`return.type =
 "cor"`).
 
 ``` r
 require(cSEM.DGP)
-```
 
-    ## Loading required package: cSEM.DGP
-
-``` r
 model <- "
 # Structural model
 eta2 ~ 0.6*eta1
