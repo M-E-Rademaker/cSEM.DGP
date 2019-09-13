@@ -4,19 +4,19 @@
 \alias{generateConstructCor}
 \title{Compute construct correlation matrix}
 \usage{
-generateConstructCor(path_matrix = path_matrix, gamma = NULL)
+generateConstructCor(.structural = NULL, .gamma = NULL)
 }
 \arguments{
-\item{gamma}{A (8 x 8) matrix containing the path coefficients.}
-
 \item{.structural}{A matrix mimicking the structural relationship
 between constructs. Up to 8 constructs are supported.}
+
+\item{.gamma}{A (8 x 8) matrix containing the path coefficients.}
 }
 \value{
 A (8 x 8) matrix of construct correlations.
 }
 \description{
 Calculate the construct correlation matrix correlation. Currently, there
-is a limit of ten constructs.
+is a limit of eigth constructs.
 }
 \keyword{internal}

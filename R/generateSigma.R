@@ -110,7 +110,7 @@ generateSigma <- function(
 
   # Compute the Covariance matrix between the endogenous and between the endogenous
   # and the exogenous constructs
-  vcv_matrix <- generateConstructCor(path_matrix = path_matrix, gamma = gamma)
+  vcv_matrix <- generateConstructCor(.structural = path_matrix, .gamma = gamma)
 
   # Combine the covariance matrix with the correlation matrix between the
   # exogenous variables
