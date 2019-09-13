@@ -70,7 +70,7 @@ eta3 =~ 0.9*y31 + 0.8*y32 + 0.7*y33
 
 Models <- generateData(model,
                        "gamma" = c(0.3, 0.6),
-                       "lambda" = c(0.8, 0.85, 0.9))
-Models
+                       "lambda" = c(0.8, 0.85, 0.9), .N = 10)
+Models[1:3]
 
 }
