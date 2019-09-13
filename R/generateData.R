@@ -71,8 +71,8 @@
 #' dat[1:3]
 #'
 #' ## If the model contains composites, within-block indicator correlation
-#'    needs to be set as well.
-#'    Here too, variable values may be used
+#' ## needs to be set as well.
+#' ## Here too, variable values may be used
 #'
 #' model <- "
 #' # Structural model
