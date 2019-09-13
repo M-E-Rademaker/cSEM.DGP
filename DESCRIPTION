@@ -20,11 +20,13 @@ Description: Generate population indicator correlation matrices for a given stru
   the remaining fixed parameters.
 BugReports: https://github.com/M-E-Rademaker/cSEM.DGP/issues
 URL: https://github.com/M-E-Rademaker/cSEM.DGP
-License: GPL-3
+License: GPL-3 + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports: cSEM,
   matrixcalc
+Suggests: 
+    pkgdown
 Remotes: M-E-Rademaker/cSEM
 RoxygenNote: 6.1.1
 Roxygen: list(markdown = TRUE, roclets = c("rd", "namespace", "collate"))
