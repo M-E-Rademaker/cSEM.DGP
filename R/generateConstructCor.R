@@ -18,6 +18,9 @@ generateConstructCor <- function(
 
   k <- nrow(.structural)
 
+  if(k > 8) {
+    stop("Models containing more than 8 constructs are not supported.", call. = FALSE)
+  }
   # Define matrix for the correlations with the same dimension as the matrix
   # (Upper triangular matrix)
   # with the path coefficients

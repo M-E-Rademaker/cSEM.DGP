@@ -44,7 +44,14 @@ in \link[lavaan:model.syntax]{lavaan model syntax}.
 }
 \details{
 Generate data for structural equation models including up to 8 constructs. Generation
-is based parameter values given in \href{http://lavaan.ugent.be/tutorial/syntax1.html}{lavaan model syntax}.
+is based on parameter values given in \href{http://lavaan.ugent.be/tutorial/syntax1.html}{lavaan model syntax}.
+
+For the structural model, values are path coeffcients. For the measurement
+model values in each equation are taken to be loadings, if the concept is modeled as a
+common factor (\code{=~}). If the concept is modeled as a composite (\code{<~}) values are
+interpreted as weights!
+In this case the correlation between indicators needs to
+be set as well. See the example below.
 
 In addition to supplying numeric values, variable values for parameters are allowed.
 To achieve this, the package makes use of \href{http://lavaan.ugent.be/}{lavaan}'s
@@ -53,10 +60,11 @@ by a symbolic name and assign a vector of values to that name. These values will
 to generate data for all possible combinations of these values with the remaining fixed parameters.
 
 If \code{.return_type} is \code{"data.frame"} or \code{"matrix"} normally distributed data
-is generated based on the indicator correlation matrix witch would be
+is generated based on the indicator correlation matrix which would be
 returned if \code{.return_type = "cor"}.
 }
 \examples{
+## Model with only common factors
 model <- "
 # Structural model
 eta2 ~ gamma*eta1
@@ -68,9 +76,31 @@ eta2 =~ 0.7*y21 + 0.7*y22 + 0.9*y23
 eta3 =~ 0.9*y31 + 0.8*y32 + 0.7*y33
 "
 
-Models <- generateData(model,
+dat <- generateData(model,
                        "gamma" = c(0.3, 0.6),
                        "lambda" = c(0.8, 0.85, 0.9), .N = 10)
-Models[1:3]
+dat[1:3]
 
+## If the model contains composites, within-block indicator correlation
+   needs to be set as well.
+   Here too, variable values may be used
+
+model <- "
+# Structural model
+eta2 ~ 0.2*eta1
+eta3 ~ 0.4*eta1 + 0.35*eta2
+
+# Measurement model
+eta1 <~ 0.7*y11 + 0.9*y12 + 0.8*y13
+eta2 =~ 0.7*y21 + 0.7*y22 + 0.9*y23
+eta3 =~ 0.9*y31 + 0.8*y32 + 0.7*y33
+
+# Within block indicator correlation
+y11 ~~ 0.2*y12
+y11 ~~ 0.3*y13
+y12 ~~ epsilon*y13
+"
+
+dat <- generateData(model, "epsilon" = c(0.1, 0.2, 0.3), .return_type = "cor")
+dat
 }

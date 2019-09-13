@@ -41,3 +41,26 @@ dat <- generateData(model_pop, .return_type = "matrix", .N = 1000, .empirical = 
 require(cSEM)
 a <- csem(dat, model)
 summarize(a)
+
+
+needs to be set as well.
+Here too, variable values may be used
+
+model <- "
+# Structural model
+eta2 ~ 0.2*eta1
+eta3 ~ 0.4*eta1 + 0.35*eta2
+
+# Measurement model
+eta1 <~ 0.7*y11 + 0.9*y12 + 0.8*y13
+eta2 =~ 0.7*y21 + 0.7*y22 + 0.9*y23
+eta3 =~ 0.9*y31 + 0.8*y32 + 0.7*y33
+
+# Within block indicator correlation
+y11 ~~ 0.2*y12
+y11 ~~ 0.3*y13
+y12 ~~ epsilon*y13
+"
+
+dat <- generateData(model, "epsilon" = c(0.1, 0.2, 0.3), .return_type = "cor")
+dat
