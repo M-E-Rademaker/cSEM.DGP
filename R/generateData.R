@@ -3,8 +3,22 @@
 #' Generates data based on the parameters of a structural equation model
 #' in [lavaan model syntax][lavaan::model.syntax].
 #'
+#' Generate data for structural equation models including up to 8 constructs. Generation
+#' is based parameter values given in [lavaan model syntax](http://lavaan.ugent.be/tutorial/syntax1.html).
+#'
+#' In addition to supplying numeric values, variable values for parameters are allowed.
+#' To achieve this, the package makes use of [lavaan](http://lavaan.ugent.be/)'s
+#' labeling capabilities. Users may replace a given parameter in, i.e. the structural model
+#' by a symbolic name and assign a vector of values to that name. These values will be used
+#' to generate data for all possible combinations of these values with the remaining fixed parameters.
+#'
+#' If `.return_type` is `"data.frame"` or `"matrix"` normally distributed data
+#' is generated based on the indicator correlation matrix witch would be
+#' returned if `.return_type = "cor"`.
+#'
 #' @usage generateData(
 #'  .model                    = NULL,
+#'  .empirical                = FALSE,
 #'  .handle_negative_definite = c("stop", "ignore"),
 #'  .N                        = 200,
 #'  .return_type              = c("data.frame", "matrix", "cor"),
@@ -12,6 +26,8 @@
 #'  )
 #'
 #' @param .model A model in [lavaan model syntax][lavaan::model.syntax].
+#' @param .empirical Logical. If TRUE, mu and Sigma of the normal distribution
+#'   specify the empirical not the population mean and covariance matrix.
 #' @param .handle_negative_definite Character string. How should negative definite
 #'   indicator correlation matrices be handled? One of `"stop"` or `"ignore"` in which case
 #'   an `NA` is produced. Defaults to `"stop"`.
@@ -29,23 +45,24 @@
 #' @examples
 #' model <- "
 #' # Structural model
-#' eta2 ~ gamma1*eta1
+#' eta2 ~ gamma*eta1
 #' eta3 ~ 0.4*eta1 + 0.35*eta2
 #'
 #' # Measurement model
-#' eta1 =~ lambda1*y11 + 0.9*y12 + 0.8*y13
+#' eta1 =~ lambda*y11 + 0.9*y12 + 0.8*y13
 #' eta2 =~ 0.7*y21 + 0.7*y22 + 0.9*y23
 #' eta3 =~ 0.9*y31 + 0.8*y32 + 0.7*y33
 #' "
 #'
-#' Models <- generatecSEMModel(model,
-#'                            "gamma1" = c(0.3, 0.6),
-#'                            "lambda1" = c(0.8, 0.85, 0.9))
+#' Models <- generateData(model,
+#'                        "gamma" = c(0.3, 0.6),
+#'                        "lambda" = c(0.8, 0.85, 0.9))
 #' Models
 #'
 
 generateData <- function(
   .model                    = NULL,
+  .empirical                = FALSE,
   .handle_negative_definite = c("stop", "ignore"),
   .return_type              = c("data.frame", "matrix", "cor"),
   .N                        = 200,
@@ -70,6 +87,18 @@ generateData <- function(
       sigma_list
     }
   } else {
-    stop("to do")
+    data_list <- lapply(sigma_list, function(x) {
+      out <- MASS::mvrnorm(.N, mu = rep(0, nrow(x)), Sigma = x, empirical = .empirical)
+      if(.return_type == "data.frame") {
+        out <- as.data.frame(out)
+      }
+      out
+    })
+
+    if(length(data_list) == 1) {
+      data_list[[1]]
+    } else {
+      data_list
+    }
   }
 }

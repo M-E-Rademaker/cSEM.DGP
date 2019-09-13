@@ -2,7 +2,7 @@
 % Please edit documentation in R/generateSigma.R
 \name{generateSigma}
 \alias{generateSigma}
-\title{Generate indicator correlation matrix}
+\title{Generate the indicator correlation matrix}
 \usage{
 generateSigma(
  .model                    = NULL,
@@ -20,8 +20,8 @@ an \code{NA} is produced. Defaults to \code{"stop"}.}
 A K by K matrix of indicator correlations. K is the number of indicators
 }
 \description{
-Generates a population indicator correlation matrix for a given
-structural equation model based on the parameter given by the user.
+Generates the indicator correlation matrix based on the parameters of a
+structural equation model in \link[lavaan:model.syntax]{lavaan model syntax}.
 }
 \examples{
 model <- "
@@ -38,3 +38,4 @@ eta3 =~ 0.9*y31 + 0.8*y32 + 0.7*y33
 Sigma <- generateSigma(model)
 Sigma
 }
+\keyword{internal}

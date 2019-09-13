@@ -16,7 +16,7 @@ between constructs. Up to 8 constructs are supported.}
 A (8 x 8) matrix of construct correlations.
 }
 \description{
-Calculate the construct correlation matrix correlation. Currently, there
+Calculate the construct correlation matrix. Currently, there
 is a limit of eigth constructs.
 }
 \keyword{internal}

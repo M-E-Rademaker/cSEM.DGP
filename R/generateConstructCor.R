@@ -1,6 +1,6 @@
 #' Compute construct correlation matrix
 #'
-#' Calculate the construct correlation matrix correlation. Currently, there
+#' Calculate the construct correlation matrix. Currently, there
 #' is a limit of eigth constructs.
 #'
 #' @param .structural A matrix mimicking the structural relationship

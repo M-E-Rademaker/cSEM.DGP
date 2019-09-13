@@ -25,9 +25,10 @@ License: GPL-3 + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports: cSEM,
-  matrixcalc
+  matrixcalc,
+  MASS
 Suggests: 
-    pkgdown
+  pkgdown
 Remotes: M-E-Rademaker/cSEM
 RoxygenNote: 6.1.1
 Roxygen: list(markdown = TRUE, roclets = c("rd", "namespace", "collate"))

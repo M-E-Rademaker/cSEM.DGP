@@ -15,7 +15,7 @@
 #
 #' @return A K by K matrix of indicator correlations. K is the number of indicators
 #'
-#' @export
+#' @keywords internal
 #'
 #' @examples
 #' model <- "
