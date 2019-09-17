@@ -7,7 +7,7 @@
 generateData(
  .model                    = NULL,
  .empirical                = FALSE,
- .handle_negative_definite = c("stop", "drop"),
+ .handle_negative_definite = c("stop", "drop", "set_NA"),
  .return_type              = c("data.frame", "matrix", "cor"),
  .N                        = 200,
  ...
@@ -20,8 +20,8 @@ generateData(
 specify the empirical not the population mean and covariance matrix.}
 
 \item{.handle_negative_definite}{Character string. How should negative definite
-indicator correlation matrices be handled? One of \code{"stop"} or \code{"drop"} in which case
-an \code{NA} is produced. Defaults to \code{"stop"}.}
+indicator correlation matrices be handled? One of \code{"stop"}, \code{"drop"} or \code{"set_NA"}
+in which case an \code{NA} is produced. Defaults to \code{"stop"}.}
 
 \item{.return_type}{Character string. One of \code{"data.frame"}, \code{matrix} or \code{"cor"}
 in which case the indicator correlation matrix is returned. Defaults to \code{".data.frame"}.}
@@ -36,7 +36,8 @@ values to use for the paramter given by \code{"name"}.}
 \value{
 The generated data. Either as a data.frame (\code{return_type = "data.frame"}),
 a numeric matrix (\code{return.type = "matrix"}),
-or a correlation matrix (\code{return.type = "cor"}).
+or a correlation matrix (\code{return.type = "cor"}). If variable parameters
+have been set a nested tibble is returned.
 }
 \description{
 Generates data based on the parameters of a structural equation model
@@ -46,22 +47,25 @@ in \link[lavaan:model.syntax]{lavaan model syntax}.
 Generate data for structural equation models including up to 8 constructs. Generation
 is based on parameter values given in \href{http://lavaan.ugent.be/tutorial/syntax1.html}{lavaan model syntax}.
 
-For the structural model, values are path coeffcients. For the measurement
+For the structural model (\code{~}), values are path coeffcients. For the measurement
 model values in each equation are taken to be loadings, if the concept is modeled as a
 common factor (\code{=~}). If the concept is modeled as a composite (\code{<~}) values are
 interpreted as (unscaled) weights!
-In this case the correlation between indicators needs to
+In this case, the correlation between indicators needs to
 be set as well. See the example below.
 
 In addition to supplying numeric values, variable values for parameters are allowed.
 To achieve this, the package makes use of \href{http://lavaan.ugent.be/}{lavaan}'s
 labeling capabilities. Users may replace a given parameter in, i.e. the structural model
-by a symbolic name and assign a vector of values to that name. These values will be used
-to generate data for all possible combinations of these values with the remaining fixed parameters.
+by a symbolic name and assign a vector of values to that name by passing a
+\code{"name = vector_of_values"} argument to \code{\link[=generateData]{generateData()}}. These values will be used
+to generate data for all possible combinations of these values with the
+remaining fixed parameters.
 
 If \code{.return_type} is \code{"data.frame"} or \code{"matrix"} normally distributed data
-is generated based on the indicator correlation matrix which would be
-returned if \code{.return_type = "cor"}.
+with zero mean and variance-covariance matrix equal to the indicator correlation
+matrix which would be returned if \code{.return_type = "cor"}, i,e the population
+indicator correlation matrix.
 }
 \examples{
 ## Model with only common factors
@@ -79,7 +83,7 @@ eta3 =~ 0.9*y31 + 0.8*y32 + 0.7*y33
 dat <- generateData(model,
                        "gamma" = c(0.3, 0.6),
                        "lambda" = c(0.8, 0.85, 0.9), .N = 10)
-dat[1:3]
+dat
 
 ## If the model contains composites, within-block indicator correlation
 ## needs to be set as well.
@@ -103,4 +107,7 @@ y12 ~~ epsilon*y13
 
 dat <- generateData(model, "epsilon" = c(0.1, 0.2, 0.3), .return_type = "cor")
 dat
+
+## To access a specification use regular data frame syntax
+dat$dgp
 }

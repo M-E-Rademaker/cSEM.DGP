@@ -25,8 +25,10 @@ License: GPL-3 + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports: cSEM,
+  dplyr,
   matrixcalc,
-  MASS
+  MASS,
+  tibble
 Suggests: 
   pkgdown
 Remotes: M-E-Rademaker/cSEM

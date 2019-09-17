@@ -38,6 +38,7 @@ generatecSEMModel <- function(
 
   #  Compute all combinations of the variables and create new data structural
   # models
+  path_coefs <- NULL
   if(nrow(indices) > 0) {
     path_coefs <- expand.grid(params[param_names_path])
 
@@ -61,6 +62,7 @@ generatecSEMModel <- function(
 
   #  Compute all combinations of the variables and create new data structural
   # models
+  measurement_coefs <- NULL
   if(nrow(indices) > 0) {
     measurement_coefs <- expand.grid(params[param_names_measurement])
 
@@ -84,6 +86,7 @@ generatecSEMModel <- function(
 
   #  Compute all combinations of the variables and create new data structural
   # models
+  error_coefs <- NULL
   if(nrow(indices) > 0) {
     error_coefs <- expand.grid(params[param_names_error])
 
@@ -107,6 +110,7 @@ generatecSEMModel <- function(
 
   #  Compute all combinations of the variables and create new data structural
   # models
+  phi_coefs <- NULL
   if(nrow(indices) > 0) {
     phi_coefs <- expand.grid(params[param_names_phi])
 
@@ -119,6 +123,42 @@ generatecSEMModel <- function(
     class(phi) <- "numeric"
     phil <- list(phi)
     phil
+  }
+
+  ## Merge
+  coef_df <- NULL
+  if(!is.null(path_coefs)) {
+    coef_df <- path_coefs
+    if(!is.null(measurement_coefs)) {
+      coef_df <- merge(coef_df, measurement_coefs, sort = FALSE)
+    }
+    if(!is.null(error_coefs)) {
+      coef_df <- merge(coef_df, error_coefs, sort = FALSE)
+    }
+    if(!is.null(phi_coefs)) {
+      coef_df <- merge(coef_df, phi_coefs, sort = FALSE)
+    }
+  } else if(!is.null(measurement_coefs)) {
+    coef_df <- measurement_coefs
+    if(!is.null(error_coefs)) {
+      coef_df <- merge(coef_df, error_coefs, sort = FALSE)
+    }
+    if(!is.null(phi_coefs)) {
+      coef_df <- merge(coef_df, phi_coefs, sort = FALSE)
+    }
+
+  } else if(!is.null(error_coefs)) {
+    coef_df <- error_coefs
+    if(!is.null(phi_coefs)) {
+      coef_df <- merge(coef_df, phi_coefs, sort = FALSE)
+    }
+  } else if(!is.null(phi_coefs)) {
+    coef_df <- phi_coefs
+  }
+
+  # Add rownames as column
+  if(!is.null(coef_df)) {
+    coef_df <- data.frame("Id" = 1:nrow(coef_df), coef_df)
   }
 
   ## Combine Structural, measurement/composite and error correlation matrices
@@ -146,5 +186,5 @@ generatecSEMModel <- function(
     }), recursive = FALSE)
 
   # Return
-  sme
+  list("Models" = sme, "Coef_df" = coef_df)
 }

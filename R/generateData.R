@@ -6,27 +6,30 @@
 #' Generate data for structural equation models including up to 8 constructs. Generation
 #' is based on parameter values given in [lavaan model syntax](http://lavaan.ugent.be/tutorial/syntax1.html).
 #'
-#' For the structural model, values are path coeffcients. For the measurement
+#' For the structural model (`~`), values are path coeffcients. For the measurement
 #' model values in each equation are taken to be loadings, if the concept is modeled as a
 #' common factor (`=~`). If the concept is modeled as a composite (`<~`) values are
 #' interpreted as (unscaled) weights!
-#' In this case the correlation between indicators needs to
+#' In this case, the correlation between indicators needs to
 #' be set as well. See the example below.
 #'
 #' In addition to supplying numeric values, variable values for parameters are allowed.
 #' To achieve this, the package makes use of [lavaan](http://lavaan.ugent.be/)'s
 #' labeling capabilities. Users may replace a given parameter in, i.e. the structural model
-#' by a symbolic name and assign a vector of values to that name. These values will be used
-#' to generate data for all possible combinations of these values with the remaining fixed parameters.
+#' by a symbolic name and assign a vector of values to that name by passing a
+#' `"name = vector_of_values"` argument to [generateData()]. These values will be used
+#' to generate data for all possible combinations of these values with the
+#' remaining fixed parameters.
 #'
 #' If `.return_type` is `"data.frame"` or `"matrix"` normally distributed data
-#' is generated based on the indicator correlation matrix which would be
-#' returned if `.return_type = "cor"`.
+#' with zero mean and variance-covariance matrix equal to the indicator correlation
+#' matrix which would be returned if `.return_type = "cor"`, i,e the population
+#' indicator correlation matrix.
 #'
 #' @usage generateData(
 #'  .model                    = NULL,
 #'  .empirical                = FALSE,
-#'  .handle_negative_definite = c("stop", "drop"),
+#'  .handle_negative_definite = c("stop", "drop", "set_NA"),
 #'  .return_type              = c("data.frame", "matrix", "cor"),
 #'  .N                        = 200,
 #'  ...
@@ -36,8 +39,8 @@
 #' @param .empirical Logical. If TRUE, mu and Sigma of the normal distribution
 #'   specify the empirical not the population mean and covariance matrix.
 #' @param .handle_negative_definite Character string. How should negative definite
-#'   indicator correlation matrices be handled? One of `"stop"` or `"drop"` in which case
-#'   an `NA` is produced. Defaults to `"stop"`.
+#'   indicator correlation matrices be handled? One of `"stop"`, `"drop"` or `"set_NA"`
+#'   in which case an `NA` is produced. Defaults to `"stop"`.
 #' @param .N Integer. The number of observations to generate. Ignored if
 #'   `return.type = "cor"`. Defaults to `200`.
 #' @param .return_type Character string. One of `"data.frame"`, `matrix` or `"cor"`
@@ -48,7 +51,8 @@
 #'
 #' @return The generated data. Either as a data.frame (`return_type = "data.frame"`),
 #'   a numeric matrix (`return.type = "matrix"`),
-#'   or a correlation matrix (`return.type = "cor"`).
+#'   or a correlation matrix (`return.type = "cor"`). If variable parameters
+#'   have been set a nested tibble is returned.
 #'
 #' @export
 #'
@@ -68,7 +72,7 @@
 #' dat <- generateData(model,
 #'                        "gamma" = c(0.3, 0.6),
 #'                        "lambda" = c(0.8, 0.85, 0.9), .N = 10)
-#' dat[1:3]
+#' dat
 #'
 #' ## If the model contains composites, within-block indicator correlation
 #' ## needs to be set as well.
@@ -92,10 +96,13 @@
 #'
 #' dat <- generateData(model, "epsilon" = c(0.1, 0.2, 0.3), .return_type = "cor")
 #' dat
+#'
+#' ## To access a specification use regular data frame syntax
+#' dat$dgp
 generateData <- function(
   .model                    = NULL,
   .empirical                = FALSE,
-  .handle_negative_definite = c("stop", "drop"),
+  .handle_negative_definite = c("stop", "drop", "set_NA"),
   .return_type              = c("data.frame", "matrix", "cor"),
   .N                        = 200,
   ...
@@ -108,30 +115,50 @@ generateData <- function(
   model_list <- generatecSEMModel(.model, ...)
 
   ## Compute Sigma matrices
-  sigma_list <- lapply(model_list, generateSigma,
+  sigma_list <- lapply(model_list$Models, generateSigma,
                        .handle_negative_definite = handle_negative_definite)
 
-  ## Get relevant objects
-  if(return_type == "cor") {
-    if(length(sigma_list) == 1) {
-      sigma_list[[1]]
-    } else {
-      sigma_list
+  ## Create tibble
+  if(!is.null(model_list$Coef_df)) {
+    info_frame <- merge(model_list$Coef_df, tibble::enframe(sigma_list, name = "Id", value = "dgp"), by = "Id")
+    info_frame <- tibble::as_tibble(info_frame)
+    ## Drop NA's if requested
+    if(handle_negative_definite == "drop") {
+      info_frame <- info_frame[!sapply(info_frame$dgp, anyNA), ]
     }
   } else {
-    sigma_list <- Filter(Negate(anyNA), sigma_list)
-    data_list <- lapply(sigma_list, function(x) {
-      out <- MASS::mvrnorm(.N, mu = rep(0, nrow(x)), Sigma = x, empirical = .empirical)
-      if(return_type == "data.frame") {
-        out <- as.data.frame(out)
-      }
-      out
-    })
+    info_frame <- sigma_list[[1]]
+  }
 
-    if(length(data_list) == 1) {
-      data_list[[1]]
+  # Get relevant objects
+  if(return_type == "cor") {
+    info_frame
+  } else {
+
+    if(!is.null(model_list$Coef_df)) {
+      info_frame <- dplyr::mutate(info_frame, "dgp" = lapply(dgp, function(x) {
+        if(anyNA(x)) {
+          NA
+        } else {
+          out <- MASS::mvrnorm(.N, mu = rep(0, nrow(x)), Sigma = x, empirical = .empirical)
+          if(return_type == "data.frame") {
+            out <- as.data.frame(out)
+          }
+          out
+        }
+      }))
     } else {
-      data_list
+      if(anyNA(info_frame)) {
+        NA
+      } else {
+        info_frame <- MASS::mvrnorm(.N, mu = rep(0, nrow(info_frame)), Sigma = info_frame, empirical = .empirical)
+        if(return_type == "data.frame") {
+          info_frame <- as.data.frame(info_frame)
+        }
+      }
     }
+
+    # Return
+    info_frame
   }
 }

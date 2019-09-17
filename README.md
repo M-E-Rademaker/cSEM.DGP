@@ -9,7 +9,7 @@ status](https://www.r-pkg.org/badges/version/cSEM.DGP)](https://cran.r-project.o
 Status](https://travis-ci.com/M-E-Rademaker/cSEM.DGP.svg?branch=master)](https://travis-ci.com/M-E-Rademaker/cSEM.DGP)
 
 Please report bugs to [the package
-developers](mailto:manuel.rademaker@uni-wuerzburg.de;f.schuberth@utwente.nl).
+developer](mailto:manuel.rademaker@uni-wuerzburg.de).
 
 ## Installation:
 
@@ -88,7 +88,8 @@ dat
 To include variable paramters:
 
 1.  Replace a numeric value by a character string of your choice.
-2.  Supply a vector of values to `generateData()`.
+2.  Supply a named vector of values to `generateData()` where the name
+    corresponds to the character string of your choice.
 
 Now, data for all possible combinations of these values with the
 remaining fixed parameters will be generated
@@ -98,8 +99,8 @@ remaining fixed parameters will be generated
 # the first loading of eta1.
 model <- "
 # Structural model
-eta2 ~ gamma*eta1
-eta3 ~ 0.4*eta1 + 0.35*eta2
+eta2 ~ gamma1*eta1
+eta3 ~ gamma2*eta1 + 0.35*eta2
 
 # Measurement model
 eta1 =~ lambda*y11 + 0.9*y12 + 0.8*y13
@@ -108,25 +109,26 @@ eta3 =~ 0.9*y31 + 0.8*y32 + 0.7*y33
 "
 
 dat <- generateData(model, .return_type = "cor", 
-                      lambda = c(0.8, 0.9),
-                      gamma = c(0.2, 0.3))
-str(dat)
+                    lambda = c(0.8, 0.9),
+                    gamma1 = c(0.2, 0.3),
+                    gamma2 = c(0, 0.2, 0.3),
+                    .handle_negative_definite = "drop"
+                    )
+dat
 ```
 
-    ## List of 4
-    ##  $ : num [1:9, 1:9] 1 0.72 0.64 0.112 0.112 ...
-    ##   ..- attr(*, "dimnames")=List of 2
-    ##   .. ..$ : chr [1:9] "y11" "y12" "y13" "y21" ...
-    ##   .. ..$ : chr [1:9] "y11" "y12" "y13" "y21" ...
-    ##  $ : num [1:9, 1:9] 1 0.81 0.72 0.126 0.126 ...
-    ##   ..- attr(*, "dimnames")=List of 2
-    ##   .. ..$ : chr [1:9] "y11" "y12" "y13" "y21" ...
-    ##   .. ..$ : chr [1:9] "y11" "y12" "y13" "y21" ...
-    ##  $ : num [1:9, 1:9] 1 0.72 0.64 0.168 0.168 ...
-    ##   ..- attr(*, "dimnames")=List of 2
-    ##   .. ..$ : chr [1:9] "y11" "y12" "y13" "y21" ...
-    ##   .. ..$ : chr [1:9] "y11" "y12" "y13" "y21" ...
-    ##  $ : num [1:9, 1:9] 1 0.81 0.72 0.189 0.189 ...
-    ##   ..- attr(*, "dimnames")=List of 2
-    ##   .. ..$ : chr [1:9] "y11" "y12" "y13" "y21" ...
-    ##   .. ..$ : chr [1:9] "y11" "y12" "y13" "y21" ...
+    ## # A tibble: 12 x 5
+    ##       Id gamma1 gamma2 lambda dgp              
+    ##    <int>  <dbl>  <dbl>  <dbl> <list>           
+    ##  1     1    0.2    0      0.8 <dbl[,9] [9 x 9]>
+    ##  2     2    0.3    0      0.8 <dbl[,9] [9 x 9]>
+    ##  3     3    0.2    0.2    0.8 <dbl[,9] [9 x 9]>
+    ##  4     4    0.3    0.2    0.8 <dbl[,9] [9 x 9]>
+    ##  5     5    0.2    0.3    0.8 <dbl[,9] [9 x 9]>
+    ##  6     6    0.3    0.3    0.8 <dbl[,9] [9 x 9]>
+    ##  7     7    0.2    0      0.9 <dbl[,9] [9 x 9]>
+    ##  8     8    0.3    0      0.9 <dbl[,9] [9 x 9]>
+    ##  9     9    0.2    0.2    0.9 <dbl[,9] [9 x 9]>
+    ## 10    10    0.3    0.2    0.9 <dbl[,9] [9 x 9]>
+    ## 11    11    0.2    0.3    0.9 <dbl[,9] [9 x 9]>
+    ## 12    12    0.3    0.3    0.9 <dbl[,9] [9 x 9]>

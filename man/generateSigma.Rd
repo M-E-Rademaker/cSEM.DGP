@@ -6,15 +6,15 @@
 \usage{
 generateSigma(
  .model                    = NULL,
- .handle_negative_definite = c("stop", "drop")
+ .handle_negative_definite = c("stop", "drop", "set_NA")
  )
 }
 \arguments{
 \item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}}
 
 \item{.handle_negative_definite}{Character string. How should negative definite
-Sigma matrices be handeled? One of \code{"stop"} or \code{"drop"} in which case
-an \code{NA} is produced. Defaults to \code{"stop"}.}
+indicator correlation matrices be handled? One of \code{"stop"}, \code{"drop"} or \code{"set_NA"}
+in which case an \code{NA} is produced. Defaults to \code{"stop"}.}
 }
 \value{
 A K by K matrix of indicator correlations. K is the number of indicators
