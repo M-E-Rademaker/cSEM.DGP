@@ -8,7 +8,8 @@
 #'  .handle_negative_definite = c("stop", "drop", "set_NA")
 #'  )
 #'
-#' @param .model A model in [lavaan model syntax][lavaan::model.syntax]
+#' @param .model A model in [lavaan model syntax][lavaan::model.syntax] or a
+#'   [cSEMModel][cSEM::csem_model].
 #' @param .handle_negative_definite Character string. How should negative definite
 #'   indicator correlation matrices be handled? One of `"stop"`, `"drop"` or `"set_NA"`
 #'   in which case an `NA` is produced. Defaults to `"stop"`.
@@ -82,23 +83,76 @@ generateSigma <- function(
   # Get Path Coefficients
   path_matrix <- model$structural2
 
-  # Define Gamma (for 10 constructs)
-  gamma       <- matrix(0, nrow = 8, ncol = 8,
-                        dimnames = list(c("eta1","eta2","eta3","eta4","eta5","eta6","eta7","eta8"),
-                                        c("eta1","eta2","eta3","eta4","eta5","eta6","eta7","eta8")))
-  # Insert the Defined Path Coefficients
-  gamma[1:ncol(path_matrix), 1:nrow(path_matrix)] <- path_matrix
-
   # Get the Correlation between the exogenous constructs
   phi_matrix <- model$Phi
 
-  # Compute the Covariance matrix between the endogenous and between the endogenous
-  # and the exogenous constructs
-  vcv_matrix <- generateConstructCor(.structural = path_matrix, .gamma = gamma)
+  # Define Gamma (for 10 constructs)
 
-  # Combine the covariance matrix with the correlation matrix between the
-  # exogenous variables
-  vcv_matrix[1:nrow(phi_matrix), 1:ncol(phi_matrix)] <- phi_matrix
+  gamma       <- matrix(0, nrow = 8, ncol = 8,
+                        dimnames = list(c("eta1","eta2","eta3","eta4","eta5","eta6","eta7","eta8"),
+                                        c("eta1","eta2","eta3","eta4","eta5","eta6","eta7","eta8")))
+
+  if(any(model$construct_order == "Second order")) {
+    ## Second order model
+    vars_2nd <- model$vars_2nd
+    vars_attached_to_2nd <- model$vars_attached_to_2nd
+    vars_not_attached_to_2nd <- model$vars_not_attached_to_2nd
+
+    ## Lambda matrix for then "inner" model
+    Lambda_2nd <- Lambda[vars_attached_to_2nd, vars_2nd, drop = FALSE]
+    I <- diag(length(vars_not_attached_to_2nd))
+    Lambda_inner <- cbind(
+      rbind(Lambda_2nd, matrix(0, nrow = nrow(I), ncol = ncol(Lambda_2nd))),
+      rbind(matrix(0, nrow = nrow(Lambda_2nd), ncol = ncol(I)), I)
+    )
+    rownames(Lambda_inner) <- c(vars_attached_to_2nd, vars_not_attached_to_2nd)
+    colnames(Lambda_inner) <- c(vars_2nd, vars_not_attached_to_2nd)
+
+    ## Theta matrix for the "inner" model
+    Theta_2nd <- Theta[vars_attached_to_2nd, vars_attached_to_2nd, drop = FALSE]
+    Theta_inner <- cbind(
+      rbind(Theta_2nd, matrix(0, nrow = nrow(I), ncol = ncol(Theta_2nd))),
+      rbind(matrix(0, nrow = nrow(Theta_2nd), ncol = ncol(I)), matrix(0, nrow = nrow(I), ncol = ncol(I)))
+    )
+
+    rownames(Theta_inner) <- c(vars_attached_to_2nd, vars_not_attached_to_2nd)
+    colnames(Theta_inner) <- c(vars_attached_to_2nd, vars_not_attached_to_2nd)
+
+    ## "Clean" Lambda and Theta
+    selector1 <- !(rownames(Lambda) %in% vars_attached_to_2nd)
+    Lambda <- Lambda[selector1, !(colnames(Lambda) %in% vars_2nd), drop = FALSE]
+
+    Theta  <- Theta[selector1, selector1, drop = FALSE]
+
+    ## Construct vcv
+    path_matrix2 <- path_matrix[!(rownames(path_matrix) %in% vars_attached_to_2nd), !(rownames(path_matrix) %in% vars_attached_to_2nd)]
+
+    # Insert the Defined Path Coefficients
+    gamma[1:ncol(path_matrix2), 1:nrow(path_matrix2)] <- path_matrix2
+
+    vcv_inner <- generateConstructCor(.structural = path_matrix2, .gamma = gamma)
+
+    vcv_matrix <- Lambda_inner[colnames(Lambda), rownames(vcv_inner)] %*%
+      vcv_inner %*% t(Lambda_inner[colnames(Lambda), rownames(vcv_inner)]) +
+      Theta_inner[colnames(Lambda), colnames(Lambda)]
+
+    # Combine the covariance matrix with the correlation matrix between the
+    # exogenous variables
+    phi_matrix <- phi_matrix[!(rownames(phi_matrix) %in% vars_attached_to_2nd), !(colnames(phi_matrix) %in% vars_attached_to_2nd), drop = FALSE]
+    vcv_matrix[1:nrow(phi_matrix), 1:ncol(phi_matrix)] <- phi_matrix
+
+  } else {
+    # Insert the Defined Path Coefficients
+    gamma[1:ncol(path_matrix), 1:nrow(path_matrix)] <- path_matrix
+
+    # Compute the Covariance matrix between the endogenous and between the endogenous
+    # and the exogenous constructs
+    vcv_matrix <- generateConstructCor(.structural = path_matrix, .gamma = gamma)
+
+    # Combine the covariance matrix with the correlation matrix between the
+    # exogenous variables
+    vcv_matrix[1:nrow(phi_matrix), 1:ncol(phi_matrix)] <- phi_matrix
+  }
 
   # Compute the indicator correlation matrix
   indicator_cor <- Lambda %*% vcv_matrix %*% t(Lambda) + Theta

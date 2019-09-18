@@ -23,7 +23,7 @@ generatecSEMModel <- function(
   params <- as.list(list(...))
   param_names <- names(params)
 
-  xx  <- cSEM::parseModel(.model)
+  xx  <- cSEM::parseModel(.model, .full_output = TRUE)
   ss  <- xx$structural2
   m   <- xx$measurement2
   e   <- xx$error_cor2
@@ -168,18 +168,23 @@ generatecSEMModel <- function(
       unlist(lapply(ml, function(m) {
         unlist(lapply(el, function(e) {
           lapply(phil, function(phi) {
-            list(
+            l <- list(
               "structural"  = xx$structural,
               "measurement" = xx$measurement,
               "error_cor"   = xx$error_cor,
               "construct_type"  = xx$construct_type,
               "construct_order" = xx$construct_order,
               "model_type"      = xx$model_type,
+              "vars_2nd"        = xx$vars_2nd,
+              "vars_attached_to_2nd" = xx$vars_attached_to_2nd,
+              "vars_not_attached_to_2nd" = xx$vars_not_attached_to_2nd,
               "structural2"  = s,
               "measurement2" = m,
               "error_cor2"   = e,
               "Phi"          = phi
             )
+            class(l) <- "cSEMModel"
+            l
           })
         }), recursive = FALSE)
       }), recursive = FALSE)
