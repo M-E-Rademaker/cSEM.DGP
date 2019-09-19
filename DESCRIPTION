@@ -28,6 +28,7 @@ Imports: cSEM,
   dplyr,
   matrixcalc,
   MASS,
+  rlang,
   tibble
 Suggests: 
   pkgdown

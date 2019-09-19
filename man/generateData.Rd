@@ -16,20 +16,21 @@ generateData(
 \arguments{
 \item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}.}
 
-\item{.empirical}{Logical. If TRUE, mu and Sigma of the normal distribution
-specify the empirical not the population mean and covariance matrix.}
+\item{.empirical}{Logical. If \code{TRUE}, mu and Sigma of the normal distribution
+specify the empirical not the population mean and covariance matrix. Ignored if
+\code{return.type = "cor"}. Defaults to \code{FALSE}.}
 
 \item{.handle_negative_definite}{Character string. How should negative definite
 indicator correlation matrices be handled? One of \code{"stop"}, \code{"drop"} or \code{"set_NA"}
 in which case an \code{NA} is produced. Defaults to \code{"stop"}.}
 
-\item{.return_type}{Character string. One of \code{"data.frame"}, \code{matrix} or \code{"cor"}
-in which case the indicator correlation matrix is returned. Defaults to \code{".data.frame"}.}
+\item{.return_type}{Character string. One of \code{"data.frame"}, \code{"matrix"} or \code{"cor"}
+in which case the indicator correlation matrix is returned. Defaults to \code{"data.frame"}.}
 
 \item{.N}{Integer. The number of observations to generate. Ignored if
 \code{return.type = "cor"}. Defaults to \code{200}.}
 
-\item{...}{\code{"name" = values} pairs. \code{"name"} is a character value giving the
+\item{...}{\code{"name" = values} pairs. \code{"name"} is a character string giving the
 label used for the parameter of interest. \code{values} is a numeric vector of
 values to use for the paramter given by \code{"name"}.}
 }
@@ -40,59 +41,85 @@ or a correlation matrix (\code{return.type = "cor"}). If variable parameters
 have been set a nested tibble is returned.
 }
 \description{
-Generates data based on the parameters of a structural equation model
+Generate data based on the parameters of a structural equation model
 in \link[lavaan:model.syntax]{lavaan model syntax}.
 }
 \details{
 Generate data for structural equation models including up to 8 constructs. Generation
 is based on parameter values given in \href{http://lavaan.ugent.be/tutorial/syntax1.html}{lavaan model syntax}.
+Currently, linear models and models containing second order constructs are
+supported. Supplying a model containing nonlinear terms causes an error.
 
-For the structural model (\code{~}), values are path coeffcients. For the measurement
-model values in each equation are taken to be loadings, if the concept is modeled as a
+For the structural model equations (\code{~}), values are path coeffcients. For measurement
+model equations values are taken to be loadings, if the concept is modeled as a
 common factor (\code{=~}). If the concept is modeled as a composite (\code{<~}) values are
 interpreted as (unscaled) weights!
-In this case, the correlation between indicators needs to
-be set as well. See the example below.
+In latter case, the correlation between indicators (\code{~~}) needs to
+be set as well. See the examples below.
 
 In addition to supplying numeric values, variable values for parameters are allowed.
 To achieve this, the package makes use of \href{http://lavaan.ugent.be/}{lavaan}'s
 labeling capabilities. Users may replace a given parameter in, i.e. the structural model
 by a symbolic name and assign a vector of values to that name by passing a
-\code{"name = vector_of_values"} argument to \code{\link[=generateData]{generateData()}}. These values will be used
+\code{"name" = vector_of_values} argument to \code{\link[=generateData]{generateData()}}. These values will be used
 to generate data for all possible combinations of these values with the
 remaining fixed parameters.
 
 If \code{.return_type} is \code{"data.frame"} or \code{"matrix"} normally distributed data
 with zero mean and variance-covariance matrix equal to the indicator correlation
 matrix which would be returned if \code{.return_type = "cor"}, i,e the population
-indicator correlation matrix.
+indicator correlation matrix, is generated.
 }
 \examples{
-## Model with only common factors
-model <- "
+# ==============================================================================
+# Without variable parameters
+# ==============================================================================
+## DGP with constructs modeled as common factors
+dgp <- "
 # Structural model
-eta2 ~ gamma*eta1
+eta2 ~ 0.4*eta1
 eta3 ~ 0.4*eta1 + 0.35*eta2
 
 # Measurement model
-eta1 =~ lambda*y11 + 0.9*y12 + 0.8*y13
+eta1 =~ 0.8*y11 + 0.9*y12 + 0.8*y13
 eta2 =~ 0.7*y21 + 0.7*y22 + 0.9*y23
 eta3 =~ 0.9*y31 + 0.8*y32 + 0.7*y33
 "
 
-dat <- generateData(model,
-                       "gamma" = c(0.3, 0.6),
-                       "lambda" = c(0.8, 0.85, 0.9), .N = 10)
+dat <- generateData(dgp, .return_type = "cor")
 dat
 
-## If the model contains composites, within-block indicator correlation
-## needs to be set as well.
-## Here too, variable values may be used
-
-model <- "
+## DGP with a construct modeled as a composite
+# If the model contains composites, within-block indicator correlation
+# needs to be set as well.
+dgp <- "
 # Structural model
 eta2 ~ 0.2*eta1
 eta3 ~ 0.4*eta1 + 0.35*eta2
+
+# Measurement model
+eta1 <~ 0.7*y11 + 0.9*y12 + 0.8*y13
+eta2 =~ 0.7*y21 + 0.7*y22 + 0.9*y23
+eta3 =~ 0.9*y31 + 0.8*y32 + 0.7*y33
+
+# Within block indicator correlation of eta1
+y11 ~~ 0.2*y12
+y11 ~~ 0.3*y13
+y12 ~~ 0.5*y13
+"
+
+dat <- generateData(dgp, .return_type = "matrix")
+dat[1:4, ]
+
+# ==============================================================================
+# With variable parameters
+# ==============================================================================
+### Linear DGP -----------------------------------------------------------------
+# Add a label and assign values to for each name
+dgp <- "
+# Structural model
+eta2 ~ 0.2*eta1
+eta3 ~ gamma*eta1 + 0.35*eta2
 
 # Measurement model
 eta1 <~ 0.7*y11 + 0.9*y12 + 0.8*y13
@@ -105,9 +132,57 @@ y11 ~~ 0.3*y13
 y12 ~~ epsilon*y13
 "
 
-dat <- generateData(model, "epsilon" = c(0.1, 0.2, 0.3), .return_type = "cor")
+dat <- generateData(dgp,
+                    "gamma" = c(-0.4, -0.2, 0, 0.2, 0.4),
+                    "epsilon" = c(0.1, 0.2, 0.3), .return_type = "data.frame")
 dat
 
-## To access a specification use regular data frame syntax
-dat$dgp
+### DGP containing a second order construct ------------------------------------
+# Second order constructs are supported as well.
+dgp_2ndorder <- "
+## Path model / Regressions
+eta2 ~ 0.5*eta1
+eta3 ~ 0.35*eta1 + 0.4*eta2
+
+## Composite model
+eta1 <~ 0.8*y41 + 0.6*y42 + 0.6*y43
+eta2 <~ 2*y51 + 3*y52 + 5*y53
+c1   <~ 0.8*y11 + 0.4*y12
+c2   <~ 0.5*y21 + 0.3*y22 + 0.2*y23 + 0.4*y24
+
+## Higher order composite
+eta3 <~ 0.4*c1 + 0.4*c2
+
+## Composite indicator correlations
+# eta1
+y41 ~~ 0.5*y42
+y41 ~~ 0.5*y43
+y42 ~~ 0.5*y43
+
+# eta2
+y51 ~~ 0.2*y52
+y51 ~~ 0.3*y53
+y52 ~~ 0.4*y53
+
+# eta3 (the 2nd order construct)
+c1 ~~ 0.49*c2
+
+# c1-c2
+y11 ~~ 0.3125*y12
+
+y21 ~~ 0.4*y22
+y21 ~~ 0.3*y23
+y21 ~~ 0.31*y24
+y22 ~~ 0.28*y23
+y22 ~~ 0.31*y24
+y23 ~~ 0.3*y24
+"
+
+dat <- generateData(dgp_2ndorder, .return_type = "data.frame", .empirical = TRUE)
+dat
+
+## Estimate using cSEM
+aa <- cSEM::csem(dat, dgp_2ndorder)
+cSEM::summarize(aa,) ## parameters estimates are identical to the DGP
+                     ## since .empirical = TRUE was used.
 }
