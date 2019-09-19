@@ -48,7 +48,8 @@ generatecSEMModel <- function(
     path_coefs <- expand.grid(params[param_names_path])
 
     sl <- lapply(1:nrow(path_coefs), function(x) {
-      ss[indices] <- unlist(path_coefs[x, ])
+      # Its crucial to order path_coef (using ss[indices])!!
+      ss[indices] <- unlist(path_coefs[x, ss[indices]])
       class(ss) <- "numeric"
       ss
     })
@@ -72,7 +73,7 @@ generatecSEMModel <- function(
     measurement_coefs <- expand.grid(params[param_names_measurement])
 
     ml <- lapply(1:nrow(measurement_coefs), function(x) {
-      m[indices] <- unlist(measurement_coefs[x, ])
+      m[indices] <- unlist(measurement_coefs[x, m[indices]])
       class(m) <- "numeric"
       m
     })
@@ -96,7 +97,7 @@ generatecSEMModel <- function(
     error_coefs <- expand.grid(params[param_names_error])
 
     el <- lapply(1:nrow(error_coefs), function(x) {
-      e[indices] <- unlist(error_coefs[x, ])
+      e[indices] <- unlist(error_coefs[x, e[indices]])
       class(e) <- "numeric"
       e
     })
@@ -120,7 +121,7 @@ generatecSEMModel <- function(
     phi_coefs <- expand.grid(params[param_names_phi])
 
     phil <- lapply(1:nrow(phi_coefs), function(x) {
-      phi[indices] <- unlist(phi_coefs[x, ])
+      phi[indices] <- unlist(phi_coefs[x, phi[indices]])
       class(phi) <- "numeric"
       phi
     })
