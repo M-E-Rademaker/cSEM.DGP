@@ -7,6 +7,8 @@
 status](https://www.r-pkg.org/badges/version/cSEM.DGP)](https://cran.r-project.org/package=cSEM.DGP)
 [![Build
 Status](https://travis-ci.com/M-E-Rademaker/cSEM.DGP.svg?branch=master)](https://travis-ci.com/M-E-Rademaker/cSEM.DGP)
+[![AppVeyor build
+status](https://ci.appveyor.com/api/projects/status/github/M-E-Rademaker/cSEM.DGP?branch=master&svg=true)](https://ci.appveyor.com/project/M-E-Rademaker/cSEM.DGP)
 
 Please report bugs to [the package
 developer](mailto:manuel.rademaker@uni-wuerzburg.de).
