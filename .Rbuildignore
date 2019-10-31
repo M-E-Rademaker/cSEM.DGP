@@ -5,6 +5,7 @@
 ^Temp$
 ^README\.Rmd$
 ^README\.html$
-^NEWS.
+^NEWS\.md
 ^\.travis\.yml
 ^appveyor\.yml$
+^cran-comments\.md$
