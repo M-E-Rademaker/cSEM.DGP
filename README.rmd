@@ -10,8 +10,6 @@ output: github_document
 [![Build Status](https://travis-ci.com/M-E-Rademaker/cSEM.DGP.svg?branch=master)](https://travis-ci.com/M-E-Rademaker/cSEM.DGP)
 [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/M-E-Rademaker/cSEM.DGP?branch=master&svg=true)](https://ci.appveyor.com/project/M-E-Rademaker/csem-dgp)
 
-Please report bugs to [the package developer](mailto:manuel.rademaker@uni-wuerzburg.de).
-
 ## Installation:
 ```{r, eval = FALSE}
 # install.packages("devtools")
@@ -27,10 +25,10 @@ devtools::install_github("M-E-Rademaker/cSEM")
 ```
 
 ## Purpose
-Generate data for structural equation models including up to 8 constructs. Generation
-is based on parameter values given in [lavaan model syntax](http://lavaan.ugent.be/tutorial/syntax1.html).
+Generate data for structural equation models including up to eight constructs. 
+Data generation is based on parameter values given in [lavaan model syntax](http://lavaan.ugent.be/tutorial/syntax1.html).
 
-In addition to supplying numeric values, variable values for parameters are allowed.
+In addition to supplying numeric values, variable values (symbolic names) for parameters are allowed.
 To achieve this, the package makes use of [lavaan](http://lavaan.ugent.be/)'s 
 labeling capabilities. 
 Users may replace a given parameter in, i.e. the structural model
@@ -38,10 +36,10 @@ by a symbolic name and assign a vector of values to that name. These values will
 to generate data for all possible combinations of these values with the remaining fixed parameters.
 
 ## Examples
-### Without variable paramters
-Simply write your model as usual in lavaan model syntax. Add a fixed numeric value 
-for each parameter. Note, currently you must either set all paramters or none. The type
-of output can be choosen. Either a data.frame (`return_type = "data.frame"`, the default),
+### Without variable parameters
+Simply write your model in [lavaan model syntax](http://lavaan.ugent.be/tutorial/syntax1.html). 
+Add a fixed numeric value for each parameter. Note, currently **you must either set all parameters or none**. The type
+of output can be chosen: a data.frame (`return_type = "data.frame"`, the default),
 a numeric matrix (`return.type = "matrix"`), or a correlation matrix (`return.type = "cor"`).
 ```{r, message=FALSE, warning=FALSE}
 require(cSEM.DGP)
@@ -61,16 +59,16 @@ dat <- generateData(model, .return_type = "cor")
 dat
 ```
 
-### Including variable paramters
+### Including variable parameters
 
-To include variable paramters:
+To include variable parameters:
 
-1. Replace a numeric value by a character string of your choice.
+1. Replace a numeric value by a symbolic name (i.e., a character string) of your choice.
 2. Supply a named vector of values to `generateData()` where the name corresponds to
-   the character string of your choice.
+   the chosen character string.
 
 Now, data for all possible combinations of these values with the remaining fixed
-parameters will be generated
+parameters will be generated.
 
 ```{r}
 # We want to vary the path coefficient between eta2 and eta1 and 
@@ -94,3 +92,9 @@ dat <- generateData(model, .return_type = "cor",
                     )
 dat
 ```
+The return type in this case is a [nested tibble](https://tidyr.tidyverse.org/articles/nest.html).
+To access e.g. the first data set type:
+```{r}
+dat$dgp[[1]]
+```
+

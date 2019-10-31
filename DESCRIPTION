@@ -11,12 +11,12 @@ Authors@R: c(person(given = "Manuel", family = "Rademaker",
                     email = "tamara.schamberger@uni-wuerzburg.de"))
 Maintainer: Manuel Rademaker <manuel.rademaker@uni-wuerzburg.de>
 Depends: R (>= 3.5.0)
-Description: Generate data for structural equation models including up to 8 constructs. Generation
-  is based parameter values given in [lavaan model syntax](http://lavaan.ugent.be/tutorial/syntax1.html).
-  In addition to supplying numeric values, variable values for parameters are allowed.
+Description: Generate data for structural equation models including up to eight constructs. Generation
+  is based on parameter values given in [lavaan model syntax](http://lavaan.ugent.be/tutorial/syntax1.html).
+  In addition to supplying numeric values, variable values (symbolic names) for parameters are allowed.
   To achieve this, the package makes use of [lavaan](http://lavaan.ugent.be/)'s 
   labeling capabilities. 
-  Users may replace a given parameter in, i.e. the structural model
+  Users may replace a given parameter in, i.e., the structural model
   by a symbolic name and assign a vector of values to that name. These values will be used
   to generate data for all possible combinations of these values with the remaining fixed parameters.
 BugReports: https://github.com/M-E-Rademaker/cSEM.DGP/issues

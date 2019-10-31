@@ -8,12 +8,13 @@
 #' Currently, linear models and models containing second order constructs are
 #' supported. Supplying a model containing nonlinear terms causes an error.
 #'
-#' For the structural model equations (`~`), values are path coeffcients. For measurement
-#' model equations values are taken to be loadings, if the concept is modeled as a
+#' For the structural model equations (`~`) values are interpreted as path coeffcients. For measurement
+#' model equations values are taken to be loadings if the concept is modeled as a
 #' common factor (`=~`). If the concept is modeled as a composite (`<~`) values are
 #' interpreted as (unscaled) weights!
-#' In latter case, the correlation between indicators (`~~`) needs to
-#' be set as well. See the examples below.
+#' In latter case, indicators are allowed to be arbitrarily correlated. Hence,
+#' the correlation between indicators (`~~`) needs to be set as well.
+#' See the examples below.
 #'
 #' In addition to supplying numeric values, variable values for parameters are allowed.
 #' To achieve this, the package makes use of [lavaan](http://lavaan.ugent.be/)'s
@@ -25,8 +26,8 @@
 #'
 #' If `.return_type` is `"data.frame"` or `"matrix"` normally distributed data
 #' with zero mean and variance-covariance matrix equal to the indicator correlation
-#' matrix which would be returned if `.return_type = "cor"`, i,e the population
-#' indicator correlation matrix, is generated.
+#' matrix which would be returned if `.return_type = "cor"` (i.e., the population
+#' indicator correlation matrix) is generated.
 #'
 #' @usage generateData(
 #'  .model                    = NULL,
@@ -48,8 +49,8 @@
 #'   `return.type = "cor"`. Defaults to `200`.
 #' @param .return_type Character string. One of `"data.frame"`, `"matrix"` or `"cor"`
 #'   in which case the indicator correlation matrix is returned. Defaults to `"data.frame"`.
-#' @param ... `"name" = values` pairs. `"name"` is a character string giving the
-#'   label used for the parameter of interest. `values` is a numeric vector of
+#' @param ... `"name" = vector_of_values` pairs. `"name"` is a character string giving the
+#'   label used for the parameter of interest. `vector_of_values` is a numeric vector of
 #'   values to use for the paramter given by `"name"`.
 #'
 #' @return The generated data. Either as a data.frame (`return_type = "data.frame"`),

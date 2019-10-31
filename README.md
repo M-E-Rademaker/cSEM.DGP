@@ -10,9 +10,6 @@ Status](https://travis-ci.com/M-E-Rademaker/cSEM.DGP.svg?branch=master)](https:/
 [![AppVeyor build
 status](https://ci.appveyor.com/api/projects/status/github/M-E-Rademaker/cSEM.DGP?branch=master&svg=true)](https://ci.appveyor.com/project/M-E-Rademaker/csem-dgp)
 
-Please report bugs to [the package
-developer](mailto:manuel.rademaker@uni-wuerzburg.de).
-
 ## Installation:
 
 ``` r
@@ -33,26 +30,27 @@ devtools::install_github("M-E-Rademaker/cSEM")
 
 ## Purpose
 
-Generate data for structural equation models including up to 8
-constructs. Generation is based on parameter values given in [lavaan
-model syntax](http://lavaan.ugent.be/tutorial/syntax1.html).
+Generate data for structural equation models including up to eight
+constructs. Data generation is based on parameter values given in
+[lavaan model syntax](http://lavaan.ugent.be/tutorial/syntax1.html).
 
-In addition to supplying numeric values, variable values for parameters
-are allowed. To achieve this, the package makes use of
-[lavaan](http://lavaan.ugent.be/)’s labeling capabilities. Users may
-replace a given parameter in, i.e. the structural model by a symbolic
-name and assign a vector of values to that name. These values will be
-used to generate data for all possible combinations of these values with
-the remaining fixed parameters.
+In addition to supplying numeric values, variable values (symbolic
+names) for parameters are allowed. To achieve this, the package makes
+use of [lavaan](http://lavaan.ugent.be/)’s labeling capabilities. Users
+may replace a given parameter in, i.e. the structural model by a
+symbolic name and assign a vector of values to that name. These values
+will be used to generate data for all possible combinations of these
+values with the remaining fixed parameters.
 
 ## Examples
 
-### Without variable paramters
+### Without variable parameters
 
-Simply write your model as usual in lavaan model syntax. Add a fixed
-numeric value for each parameter. Note, currently you must either set
-all paramters or none. The type of output can be choosen. Either a
-data.frame (`return_type = "data.frame"`, the default), a numeric matrix
+Simply write your model in [lavaan model
+syntax](http://lavaan.ugent.be/tutorial/syntax1.html). Add a fixed
+numeric value for each parameter. Note, currently **you must either set
+all parameters or none**. The type of output can be chosen: a data.frame
+(`return_type = "data.frame"`, the default), a numeric matrix
 (`return.type = "matrix"`), or a correlation matrix (`return.type =
 "cor"`).
 
@@ -85,16 +83,17 @@ dat
     ## y32 0.3904 0.4392 0.3904 0.3304 0.3304 0.4248 0.7200 1.0000 0.5600
     ## y33 0.3416 0.3843 0.3416 0.2891 0.2891 0.3717 0.6300 0.5600 1.0000
 
-### Including variable paramters
+### Including variable parameters
 
-To include variable paramters:
+To include variable parameters:
 
-1.  Replace a numeric value by a character string of your choice.
+1.  Replace a numeric value by a symbolic name (i.e., a character
+    string) of your choice.
 2.  Supply a named vector of values to `generateData()` where the name
-    corresponds to the character string of your choice.
+    corresponds to the chosen character string.
 
 Now, data for all possible combinations of these values with the
-remaining fixed parameters will be generated
+remaining fixed parameters will be generated.
 
 ``` r
 # We want to vary the path coefficient between eta2 and eta1 and 
@@ -134,3 +133,22 @@ dat
     ## 10    10    0.3    0.2    0.9 <dbl[,9] [9 x 9]>
     ## 11    11    0.2    0.3    0.9 <dbl[,9] [9 x 9]>
     ## 12    12    0.3    0.3    0.9 <dbl[,9] [9 x 9]>
+
+The return type in this case is a [nested
+tibble](https://tidyr.tidyverse.org/articles/nest.html). To access
+e.g. the first data set type:
+
+``` r
+dat$dgp[[1]]
+```
+
+    ##        y11    y12    y13    y21    y22    y23    y31    y32    y33
+    ## y11 1.0000 0.7200 0.6400 0.1120 0.1120 0.1440 0.0504 0.0448 0.0392
+    ## y12 0.7200 1.0000 0.7200 0.1260 0.1260 0.1620 0.0567 0.0504 0.0441
+    ## y13 0.6400 0.7200 1.0000 0.1120 0.1120 0.1440 0.0504 0.0448 0.0392
+    ## y21 0.1120 0.1260 0.1120 1.0000 0.4900 0.6300 0.2205 0.1960 0.1715
+    ## y22 0.1120 0.1260 0.1120 0.4900 1.0000 0.6300 0.2205 0.1960 0.1715
+    ## y23 0.1440 0.1620 0.1440 0.6300 0.6300 1.0000 0.2835 0.2520 0.2205
+    ## y31 0.0504 0.0567 0.0504 0.2205 0.2205 0.2835 1.0000 0.7200 0.6300
+    ## y32 0.0448 0.0504 0.0448 0.1960 0.1960 0.2520 0.7200 1.0000 0.5600
+    ## y33 0.0392 0.0441 0.0392 0.1715 0.1715 0.2205 0.6300 0.5600 1.0000

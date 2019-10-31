@@ -30,8 +30,8 @@ in which case the indicator correlation matrix is returned. Defaults to \code{"d
 \item{.N}{Integer. The number of observations to generate. Ignored if
 \code{return.type = "cor"}. Defaults to \code{200}.}
 
-\item{...}{\code{"name" = values} pairs. \code{"name"} is a character string giving the
-label used for the parameter of interest. \code{values} is a numeric vector of
+\item{...}{\code{"name" = vector_of_values} pairs. \code{"name"} is a character string giving the
+label used for the parameter of interest. \code{vector_of_values} is a numeric vector of
 values to use for the paramter given by \code{"name"}.}
 }
 \value{
@@ -50,12 +50,13 @@ is based on parameter values given in \href{http://lavaan.ugent.be/tutorial/synt
 Currently, linear models and models containing second order constructs are
 supported. Supplying a model containing nonlinear terms causes an error.
 
-For the structural model equations (\code{~}), values are path coeffcients. For measurement
-model equations values are taken to be loadings, if the concept is modeled as a
+For the structural model equations (\code{~}) values are interpreted as path coeffcients. For measurement
+model equations values are taken to be loadings if the concept is modeled as a
 common factor (\code{=~}). If the concept is modeled as a composite (\code{<~}) values are
 interpreted as (unscaled) weights!
-In latter case, the correlation between indicators (\code{~~}) needs to
-be set as well. See the examples below.
+In latter case, indicators are allowed to be arbitrarily correlated. Hence,
+the correlation between indicators (\code{~~}) needs to be set as well.
+See the examples below.
 
 In addition to supplying numeric values, variable values for parameters are allowed.
 To achieve this, the package makes use of \href{http://lavaan.ugent.be/}{lavaan}'s
@@ -67,8 +68,8 @@ remaining fixed parameters.
 
 If \code{.return_type} is \code{"data.frame"} or \code{"matrix"} normally distributed data
 with zero mean and variance-covariance matrix equal to the indicator correlation
-matrix which would be returned if \code{.return_type = "cor"}, i,e the population
-indicator correlation matrix, is generated.
+matrix which would be returned if \code{.return_type = "cor"} (i.e., the population
+indicator correlation matrix) is generated.
 }
 \examples{
 # ==============================================================================
