@@ -136,28 +136,34 @@ generateSigma <- function(
     # Insert the Defined Path Coefficients
     gamma[1:ncol(path_matrix2), 1:nrow(path_matrix2)] <- path_matrix2
 
+    # Add corrleation between exogenous constructs to gamma
+    phi_matrix <- phi_matrix[!(rownames(phi_matrix) %in% vars_attached_to_2nd), !(colnames(phi_matrix) %in% vars_attached_to_2nd), drop = FALSE]
+    phi_matrix[upper.tri(phi_matrix, diag = TRUE)] <- 0
+    gamma[1:nrow(phi_matrix), 1:ncol(phi_matrix)] <- phi_matrix
+
     vcv_inner <- generateConstructCor(.structural = path_matrix2, .gamma = gamma)
 
     vcv_matrix <- Lambda_inner[colnames(Lambda), rownames(vcv_inner)] %*%
       vcv_inner %*% t(Lambda_inner[colnames(Lambda), rownames(vcv_inner)]) +
       Theta_inner[colnames(Lambda), colnames(Lambda)]
 
-    # Combine the covariance matrix with the correlation matrix between the
-    # exogenous variables
-    phi_matrix <- phi_matrix[!(rownames(phi_matrix) %in% vars_attached_to_2nd), !(colnames(phi_matrix) %in% vars_attached_to_2nd), drop = FALSE]
-    vcv_matrix[1:nrow(phi_matrix), 1:ncol(phi_matrix)] <- phi_matrix
+    # # Combine the covariance matrix with the correlation matrix between the
+    # # exogenous variables
+    # phi_matrix <- phi_matrix[!(rownames(phi_matrix) %in% vars_attached_to_2nd), !(colnames(phi_matrix) %in% vars_attached_to_2nd), drop = FALSE]
+    # vcv_matrix[1:nrow(phi_matrix), 1:ncol(phi_matrix)] <- phi_matrix
 
   } else {
     # Insert the Defined Path Coefficients
     gamma[1:ncol(path_matrix), 1:nrow(path_matrix)] <- path_matrix
 
+    # Add corrleation between exogenous constructs to gamma
+    phi_matrix[upper.tri(phi_matrix, diag = TRUE)] <- 0
+    gamma[1:nrow(phi_matrix), 1:ncol(phi_matrix)] <- phi_matrix
+
     # Compute the Covariance matrix between the endogenous and between the endogenous
     # and the exogenous constructs
     vcv_matrix <- generateConstructCor(.structural = path_matrix, .gamma = gamma)
 
-    # Combine the covariance matrix with the correlation matrix between the
-    # exogenous variables
-    vcv_matrix[1:nrow(phi_matrix), 1:ncol(phi_matrix)] <- phi_matrix
   }
 
   # Compute the indicator correlation matrix

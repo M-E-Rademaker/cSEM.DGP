@@ -41,13 +41,12 @@ generatecSEMModel <- function(
                 dimnames = list(xx$cons_exo, xx$cons_exo)
   )
 
-  # Get row and column index for constructs
-  row_index <- match(rownames(Phi), rownames(cc))
-  col_index <- match(colnames(Phi), colnames(cc))
+  # Get row and column names for constructs
+  row_index <- intersect(rownames(Phi), rownames(cc))
+  col_index <- intersect(colnames(Phi), colnames(cc))
 
-  if(!anyNA(row_index) & !anyNA(col_index)) {
-    Phi <- cc[row_index, col_index, drop = FALSE]
-  }
+  Phi[row_index, col_index] <- cc[row_index, col_index, drop = FALSE]
+
   # Set diagonal elements to 1
   diag(Phi) <- 1
 
