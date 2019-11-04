@@ -31,8 +31,25 @@ generatecSEMModel <- function(
 
   ss  <- xx$structural2
   m   <- xx$measurement2
-  e   <- xx$error_cor2
-  phi <- xx$Phi
+  e   <- xx$indicator_cor
+  cc  <- xx$construct_cor
+
+  ## Only the Phi matrix is required (correlation matrix between exogenous constructs)
+  Phi <- matrix(0,
+                nrow = length(xx$cons_exo),
+                ncol = length(xx$cons_exo),
+                dimnames = list(xx$cons_exo, xx$cons_exo)
+  )
+
+  # Get row and column index for constructs
+  row_index <- match(rownames(Phi), rownames(cc))
+  col_index <- match(colnames(Phi), colnames(cc))
+
+  if(!anyNA(row_index) & !anyNA(col_index)) {
+    Phi <- cc[row_index, col_index, drop = FALSE]
+  }
+  # Set diagonal elements to 1
+  diag(Phi) <- 1
 
   ## Structural model ----------------------------------------------------------
   # Which elements in param_names match elements in ss?
@@ -83,7 +100,8 @@ generatecSEMModel <- function(
     ml
   }
 
-  ## Measurement error correlation ---------------------------------------------
+  ## Indicator correlation (if composite)/ Measurement error correlation
+  ## (if common factor) ---------------------------------------------
   # Which elements in param_names match elements in e?
   param_names_error <- intersect(param_names, c(e))
 
@@ -108,27 +126,27 @@ generatecSEMModel <- function(
   }
 
   ## Structural error correlation ----------------------------------------------
-  # Which elements in param_names match elements in e?
-  param_names_phi <- intersect(param_names, c(phi))
+  # Which elements in param_names match elements in Phi?
+  param_names_Phi <- intersect(param_names, c(Phi))
 
   # Get the array indices for these matches
-  indices <- which(matrix(phi %in% param_names_phi, dim(phi)), arr.ind = TRUE)
+  indices <- which(matrix(Phi %in% param_names_Phi, dim(Phi)), arr.ind = TRUE)
 
-  #  Compute all combinations of the variables and create new data structural
+  # Compute all combinations of the variables and create new data structural
   # models
-  phi_coefs <- NULL
+  Phi_coefs <- NULL
   if(nrow(indices) > 0) {
-    phi_coefs <- expand.grid(params[param_names_phi])
+    Phi_coefs <- expand.grid(params[param_names_Phi])
 
-    phil <- lapply(1:nrow(phi_coefs), function(x) {
-      phi[indices] <- unlist(phi_coefs[x, phi[indices]])
-      class(phi) <- "numeric"
-      phi
+    Phil <- lapply(1:nrow(Phi_coefs), function(x) {
+      Phi[indices] <- unlist(Phi_coefs[x, Phi[indices]])
+      class(Phi) <- "numeric"
+      Phi
     })
   } else {
-    class(phi) <- "numeric"
-    phil <- list(phi)
-    phil
+    class(Phi) <- "numeric"
+    Phil <- list(Phi)
+    Phil
   }
 
   ## Merge
@@ -141,25 +159,25 @@ generatecSEMModel <- function(
     if(!is.null(error_coefs)) {
       coef_df <- merge(coef_df, error_coefs, sort = FALSE)
     }
-    if(!is.null(phi_coefs)) {
-      coef_df <- merge(coef_df, phi_coefs, sort = FALSE)
+    if(!is.null(Phi_coefs)) {
+      coef_df <- merge(coef_df, Phi_coefs, sort = FALSE)
     }
   } else if(!is.null(measurement_coefs)) {
     coef_df <- measurement_coefs
     if(!is.null(error_coefs)) {
       coef_df <- merge(coef_df, error_coefs, sort = FALSE)
     }
-    if(!is.null(phi_coefs)) {
-      coef_df <- merge(coef_df, phi_coefs, sort = FALSE)
+    if(!is.null(Phi_coefs)) {
+      coef_df <- merge(coef_df, Phi_coefs, sort = FALSE)
     }
 
   } else if(!is.null(error_coefs)) {
     coef_df <- error_coefs
-    if(!is.null(phi_coefs)) {
-      coef_df <- merge(coef_df, phi_coefs, sort = FALSE)
+    if(!is.null(Phi_coefs)) {
+      coef_df <- merge(coef_df, Phi_coefs, sort = FALSE)
     }
-  } else if(!is.null(phi_coefs)) {
-    coef_df <- phi_coefs
+  } else if(!is.null(Phi_coefs)) {
+    coef_df <- Phi_coefs
   }
 
   # Add rownames as column
@@ -173,7 +191,7 @@ generatecSEMModel <- function(
     unlist(lapply(sl, function(s) {
       unlist(lapply(ml, function(m) {
         unlist(lapply(el, function(e) {
-          lapply(phil, function(phi) {
+          lapply(Phil, function(Phi) {
             l <- list(
               "structural"  = xx$structural,
               "measurement" = xx$measurement,
@@ -184,10 +202,10 @@ generatecSEMModel <- function(
               "vars_2nd"        = xx$vars_2nd,
               "vars_attached_to_2nd" = xx$vars_attached_to_2nd,
               "vars_not_attached_to_2nd" = xx$vars_not_attached_to_2nd,
-              "structural2"  = s,
-              "measurement2" = m,
-              "error_cor2"   = e,
-              "Phi"          = phi
+              "structural2"   = s,
+              "measurement2"  = m,
+              "indicator_cor" = e,
+              "phi"           = Phi
             )
             class(l) <- "cSEMModel"
             l

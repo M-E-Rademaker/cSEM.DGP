@@ -40,8 +40,9 @@ generateSigma <- function(
       w_j  <- model$measurement2[j, indicators]
 
       # If weights are given, the within-block indicator correlation matrix
-      # must be given as well
-      Sigma_jj <- as.matrix(model$error_cor2[indicators, indicators])
+      # must be given as well. If j is a composite values in indicator_cor
+      # are interpreted as indicator correlations
+      Sigma_jj <- as.matrix(model$indicator_cor[indicators, indicators])
       diag(Sigma_jj) <- 1
 
       if(nrow(Sigma_jj) > 1 && sum(Sigma_jj[lower.tri(Sigma_jj)]) == 0) {
@@ -72,8 +73,13 @@ generateSigma <- function(
       lambda_j <- model$measurement2[j, indicators]
       Lambda[indicators, j] <- lambda_j
 
+      # Get measurement error correlation
+      # If j is a common factor values in indicator_cor
+      # are interpreted as measurement error correlations
+      Theta[indicators, indicators] <- as.matrix(model$indicator_cor[indicators, indicators])
+
       # Compute Theta
-      Theta[indicators, indicators] <-  diag(1 - diag(lambda_j %*% t(lambda_j)))
+      diag(Theta[indicators, indicators]) <-  1 - diag(lambda_j %*% t(lambda_j))
     }
   }
 
@@ -84,7 +90,7 @@ generateSigma <- function(
   path_matrix <- model$structural2
 
   # Get the Correlation between the exogenous constructs
-  phi_matrix <- model$Phi
+  phi_matrix <- model$phi
 
   # Define Gamma (for 10 constructs)
 
