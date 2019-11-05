@@ -79,7 +79,11 @@ generateSigma <- function(
       Theta[indicators, indicators] <- as.matrix(model$indicator_cor[indicators, indicators])
 
       # Compute Theta
-      diag(Theta[indicators, indicators]) <-  1 - diag(lambda_j %*% t(lambda_j))
+      if(!is.null(dim(Theta[indicators, indicators]))) {
+        diag(Theta[indicators, indicators]) <-  1 - diag(lambda_j %*% t(lambda_j))
+      } else {
+        Theta[indicators, indicators] <- 1 - diag(lambda_j %*% t(lambda_j))
+      }
     }
   }
 
