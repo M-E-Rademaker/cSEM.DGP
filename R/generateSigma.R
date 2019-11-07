@@ -26,7 +26,7 @@ generateSigma <- function(
   .handle_negative_definite <- match.arg(.handle_negative_definite)
 
   ## Get relevant objects
-  model     <- cSEM::parseModel(.model)
+  model     <- cSEM::parseModel(.model, .full_output = TRUE)
   con_type  <- model$construct_type
   Lambda    <- t(model$measurement)
   Theta     <- model$error_cor
@@ -87,8 +87,8 @@ generateSigma <- function(
     }
   }
 
-  vars_exo  <- names(which(rowSums(model$structural) == 0))
-  vars_endo <- setdiff(colnames(Lambda), vars_exo)
+  vars_exo  <- model$cons_exo
+  vars_endo <- model$cons_endo
 
   # Get Path Coefficients
   path_matrix <- model$structural2

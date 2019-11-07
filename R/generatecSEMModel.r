@@ -198,6 +198,8 @@ generatecSEMModel <- function(
               "construct_type"  = xx$construct_type,
               "construct_order" = xx$construct_order,
               "model_type"      = xx$model_type,
+              "cons_exo"        = xx$cons_exo,
+              "cons_endo"       = xx$cons_endo,
               "vars_2nd"        = xx$vars_2nd,
               "vars_attached_to_2nd" = xx$vars_attached_to_2nd,
               "vars_not_attached_to_2nd" = xx$vars_not_attached_to_2nd,
