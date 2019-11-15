@@ -23,7 +23,7 @@ generatecSEMModel <- function(
   params <- as.list(list(...))
   param_names <- names(params)
 
-  xx  <- cSEM::parseModel(.model, .full_output = TRUE)
+  xx  <- cSEM::parseModel(.model)
 
   if(xx$model_type == "Nonlinear") {
     stop("Currently, models containing nonlinear terms are not supported.", call. = FALSE)

@@ -26,7 +26,7 @@ generateSigma <- function(
   .handle_negative_definite <- match.arg(.handle_negative_definite)
 
   ## Get relevant objects
-  model     <- cSEM::parseModel(.model, .full_output = TRUE)
+  model     <- cSEM::parseModel(.model)
   con_type  <- model$construct_type
   Lambda    <- t(model$measurement)
   Theta     <- model$error_cor
