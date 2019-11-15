@@ -141,9 +141,13 @@ generateSigma <- function(
     gamma[1:ncol(path_matrix2), 1:nrow(path_matrix2)] <- path_matrix2
 
     # Add corrleation between exogenous constructs to gamma
-    phi_matrix <- phi_matrix[!(rownames(phi_matrix) %in% vars_attached_to_2nd), !(colnames(phi_matrix) %in% vars_attached_to_2nd), drop = FALSE]
-    phi_matrix[upper.tri(phi_matrix, diag = TRUE)] <- 0
-    gamma[1:nrow(phi_matrix), 1:ncol(phi_matrix)] <- phi_matrix
+    phi_matrix <- phi_matrix[!(rownames(phi_matrix) %in% vars_attached_to_2nd),
+                             !(colnames(phi_matrix) %in% vars_attached_to_2nd), drop = FALSE]
+
+    if(nrow(phi_matrix) > 0) {
+      phi_matrix[upper.tri(phi_matrix, diag = TRUE)] <- 0
+      gamma[1:nrow(phi_matrix), 1:ncol(phi_matrix)] <- phi_matrix
+    }
 
     vcv_inner <- generateConstructCor(.structural = path_matrix2, .gamma = gamma)
 
@@ -161,8 +165,10 @@ generateSigma <- function(
     gamma[1:ncol(path_matrix), 1:nrow(path_matrix)] <- path_matrix
 
     # Add corrleation between exogenous constructs to gamma
-    phi_matrix[upper.tri(phi_matrix, diag = TRUE)] <- 0
-    gamma[1:nrow(phi_matrix), 1:ncol(phi_matrix)] <- phi_matrix
+    if(nrow(phi_matrix) > 0) {
+      phi_matrix[upper.tri(phi_matrix, diag = TRUE)] <- 0
+      gamma[1:nrow(phi_matrix), 1:ncol(phi_matrix)] <- phi_matrix
+    }
 
     # Compute the Covariance matrix between the endogenous and between the endogenous
     # and the exogenous constructs
