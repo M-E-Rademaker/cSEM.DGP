@@ -4,13 +4,13 @@
 \alias{generateConstructCor}
 \title{Compute construct correlation matrix}
 \usage{
-generateConstructCor(.structural = NULL, .gamma = NULL)
+generateConstructCor(.beta = NULL, .gamma = NULL, .phi = NULL)
 }
 \arguments{
+\item{.gamma}{A (8 x 8) matrix containing the path coefficients.}
+
 \item{.structural}{A matrix mimicking the structural relationship
 between constructs. Up to 8 constructs are supported.}
-
-\item{.gamma}{A (8 x 8) matrix containing the path coefficients.}
 }
 \value{
 A (8 x 8) matrix of construct correlations.

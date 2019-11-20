@@ -90,17 +90,33 @@ generateSigma <- function(
   vars_exo  <- model$cons_exo
   vars_endo <- model$cons_endo
 
+    if(length(vars_exo) > 5) {
+    stop("Models containing more than 5 exogenous constructs are not supported.", call. = FALSE)
+    }
+  if(length(vars_exo) > 3 && length(vars_exo) > 5) {
+    stop("Models containing more than 3 exogenous AND more than 5 endogenous constructs are not supported.", call. = FALSE)
+  }
+  if(length(vars_exo) > 2 && length(vars_exo) > 6) {
+    stop("Models containing more than 2 exogenous AND more than 6 endogenous constructs are not supported.", call. = FALSE)
+  }
+  if(length(vars_exo) > 7) {
+    stop("Models containing more than 7 endogenous constructs are not supported.", call. = FALSE)
+  }
+
+
   # Get Path Coefficients
   path_matrix <- model$structural2
+
+  # Get Gamma and B matrix
+  gamma <- path_matrix[vars_endo, vars_exo]
+  beta  <- path_matrix[vars_endo, vars_endo]
+
+
 
   # Get the Correlation between the exogenous constructs
   phi_matrix <- model$phi
 
-  # Define Gamma (for 10 constructs)
 
-  gamma       <- matrix(0, nrow = 8, ncol = 8,
-                        dimnames = list(c("eta1","eta2","eta3","eta4","eta5","eta6","eta7","eta8"),
-                                        c("eta1","eta2","eta3","eta4","eta5","eta6","eta7","eta8")))
 
   if(any(model$construct_order == "Second order")) {
     ## Second order model
@@ -161,18 +177,10 @@ generateSigma <- function(
     # vcv_matrix[1:nrow(phi_matrix), 1:ncol(phi_matrix)] <- phi_matrix
 
   } else {
-    # Insert the Defined Path Coefficients
-    gamma[1:ncol(path_matrix), 1:nrow(path_matrix)] <- path_matrix
-
-    # Add corrleation between exogenous constructs to gamma
-    if(nrow(phi_matrix) > 0) {
-      phi_matrix[upper.tri(phi_matrix, diag = TRUE)] <- 0
-      gamma[1:nrow(phi_matrix), 1:ncol(phi_matrix)] <- phi_matrix
-    }
 
     # Compute the Covariance matrix between the endogenous and between the endogenous
     # and the exogenous constructs
-    vcv_matrix <- generateConstructCor(.structural = path_matrix, .gamma = gamma)
+    vcv_matrix <- generateConstructCor(.gamma = gamma, .beta = beta, .phi = phi_matrix)
 
   }
 

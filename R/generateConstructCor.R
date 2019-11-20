@@ -12,66 +12,55 @@
 #' @keywords internal
 
 generateConstructCor <- function(
-  .structural = NULL,
-  .gamma = NULL
+  .beta = NULL,
+  .gamma = NULL,
+  .phi = NULL
   ){
 
-  k <- nrow(.structural)
+  k <- nrow(.beta)
 
-  if(k > 8) {
-    stop("Models containing more than 8 constructs are not supported.", call. = FALSE)
-  }
-  # Define matrix for the correlations with the same dimension as the matrix
-  # (Upper triangular matrix)
-  # with the path coefficients
-  res <- matrix(0, nrow = nrow(.structural), ncol = ncol(.structural),
-                dimnames = dimnames(.structural))
+  # Define Variances of the structural error terms
+  Psi <- matrix(0, nrow = nrow(.beta), ncol = ncol(.beta),
+                dimnames = dimnames(.beta))
 
+ # Define gamma, beta and phi for the following calculations
+  gamma_temp                                 <- matrix(0, nrow = 7, ncol = 5)
+  gamma_temp[1:nrow(.gamma), 1:ncol(.gamma)] <- .gamma
+  beta_temp                                  <- matrix(0, nrow = 7, ncol = 7)
+  beta_temp[1:nrow(.beta), 1:ncol(.beta)]    <- .beta
+  phi_temp                                   <- matrix(0, nrow = 5, ncol = 5)
+  phi_temp[1:nrow(.phi), 1:ncol(.phi)]       <- .phi
+
+
+  Psi[1,1] <- varzeta1(beta_temp, gamma_temp, phi_temp)
   if(k >= 2){
-    res[1, 2] <- eta1eta2(.gamma)
+    Psi[2, 2] <- varzeta2(beta_temp, gamma_temp, phi_temp)
   }
   if(k >= 3){
-    res[1, 3] <- eta1eta3(.gamma)
-    res[2, 3] <- eta2eta3(.gamma)
+    Psi[3, 3] <- varzeta3(beta_temp, gamma_temp, phi_temp)
   }
   if(k >= 4){
-    res[1, 4] <- eta1eta4(.gamma)
-    res[2, 4] <- eta2eta4(.gamma)
-    res[3, 4] <- eta3eta4(.gamma)
+    Psi[4, 4] <- varzeta4(beta_temp, gamma_temp, phi_temp)
+
   }
   if(k >= 5){
-    res[1, 5] <- eta1eta5(.gamma)
-    res[2, 5] <- eta2eta5(.gamma)
-    res[3, 5] <- eta3eta5(.gamma)
-    res[4, 5] <- eta4eta5(.gamma)
+    Psi[5, 5] <- varzeta5(beta_temp, gamma_temp, phi_temp)
   }
   if(k >= 6){
-    res[1, 6] <- eta1eta6(.gamma)
-    res[2, 6] <- eta2eta6(.gamma)
-    res[3, 6] <- eta3eta6(.gamma)
-    res[4, 6] <- eta4eta6(.gamma)
-    res[5, 6] <- eta5eta6(.gamma)
+    Psi[6, 6] <- varzeta6(beta_temp, gamma_temp, phi_temp)
+
   }
   if(k >= 7){
-    res[1, 7] <- eta1eta7(.gamma)
-    res[2, 7] <- eta2eta7(.gamma)
-    res[3, 7] <- eta3eta7(.gamma)
-    res[4, 7] <- eta4eta7(.gamma)
-    res[5, 7] <- eta5eta7(.gamma)
-    res[6, 7] <- eta6eta7(.gamma)
-  }
-  if(k >= 8){
-    res[1, 8] <- eta1eta8(.gamma)
-    res[2, 8] <- eta2eta8(.gamma)
-    res[3, 8] <- eta3eta8(.gamma)
-    res[4, 8] <- eta4eta8(.gamma)
-    res[5, 8] <- eta5eta8(.gamma)
-    res[6, 8] <- eta6eta8(.gamma)
-    res[7, 8] <- eta7eta8(.gamma)
+    Psi[7, 7] <- varzeta7(beta_temp, gamma_temp, phi_temp)
   }
 
-  res <- t(res) + res
-  diag(res) <- rep(1, nrow(res))
+  B            <- .beta
+  Gamma        <- .gamma
+  I            <- diag(nrow(B))
+  Pi           <- solve(I - B)%*%Gamma
+  VCV_endo_exo <- Pi%*%.phi
+  VCV_endo     <- Pi%*%.phi%*%t(Pi) + solve(I - B)%*%Psi%*%t(solve(I - B))
 
-  return(res)
+  VCV          <- cbind(rbind(.phi, VCV_endo_exo),rbind(t(VCV_endo_exo),VCV_endo))
+  return(VCV)
 }
