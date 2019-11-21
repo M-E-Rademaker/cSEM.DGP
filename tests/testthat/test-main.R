@@ -11,7 +11,7 @@
 #     3. If there are 3 exogenous constructs: a maximum of 5 endogenous constructs is allowed
 #     4. If there are 4 exogenous constructs: a maximum of 4 endogenous constructs is allowed
 #     5. If there are 5 exogenous constructs: a maximum of 4 endogenous constructs is allowed
-
+#
 ## Function to compare estimates vs population parameters
 comparecSEM <- function(.object, .what, .pop_parameters) {
   # .object: cSEM object
@@ -115,13 +115,14 @@ weights   <- comparecSEM(out, .what = "Weight_estimates", pop_weights)
 residual_cor <- comparecSEM(out, .what = "Residual_correlation", pop_residual_cor)
 indicator_cor <- comparecSEM(out, .what = "Indicator_correlation", pop_indicator_cor)
 
-test_that("1 exo construct; <= 7 endo constructs; random order in model; works") {
+test_that("1 exo construct; <= 7 endo constructs; random order in model; works", {
   expect_equal(path$Estimate, path$Pop_value)
   expect_equal(loadings$Estimate, loadings$Pop_value)
   expect_equal(weights$Estimate, weights$Pop_value)
   expect_equal(residual_cor$Estimate, residual_cor$Pop_value)
   expect_equal(indicator_cor$Estimate, indicator_cor$Pop_value)
-}
+})
+
 
 ### 3 exogenous construct and <= 5 endogenous constructs------------------------
 dgp_3exo_ok <- " # less than 5 endogenous; random order to check ordering
@@ -158,12 +159,12 @@ loadings  <- comparecSEM(out, .what = "Loading_estimates", pop_loadings)
 residual_cor <- comparecSEM(out, .what = "Residual_correlation", pop_residual_cor)
 exo_construct_cor <- comparecSEM(out, .what = "Exo_construct_correlation", pop_exo_construct_cor)
 
-test_that("1 exo construct; <= 7 endo constructs; random order in model; works") {
+test_that("1 exo construct; <= 7 endo constructs; random order in model; works", {
   expect_equal(path$Estimate, path$Pop_value)
   expect_equal(loadings$Estimate, loadings$Pop_value)
   expect_equal(residual_cor$Estimate, residual_cor$Pop_value)
   expect_equal(exo_construct_cor$Estimate, exo_construct_cor$Pop_value)
-}
+})
 
 ### 3 exogenous constructs and 3 endogenous; 1 second-order --------------------
 dgp2ndorder <- "
@@ -223,11 +224,11 @@ path      <- comparecSEM(out, .what = "Path_estimates", pop_paths)
 loadings  <- comparecSEM(out, .what = "Loading_estimates", pop_loadings)
 exo_construct_cor <- comparecSEM(out, .what = "Exo_construct_correlation", pop_exo_construct_cor)
 
-test_that("3 exo constructs; <= 7 endo constructs; 2ndorder; works") {
+test_that("3 exo constructs; <= 7 endo constructs; 2ndorder; works", {
   expect_equal(path$Estimate, path$Pop_value)
   expect_equal(loadings$Estimate, loadings$Pop_value)
   expect_equal(exo_construct_cor$Estimate, exo_construct_cor$Pop_value)
-}
+})
 
 #===============================================================================
 ### Data generating processes that cSEM.DGP can not handle ---------------------
@@ -255,9 +256,8 @@ eta7 =~ 0.7*y71 + 0.8*y72
 eta8 =~ 0.7*y81 + 0.8*y82
 "
 
-test_that("1 exo construct; > 7 endo constructs; fails") {
-  expect_error(generateData(dgp_1exo_error))
-}
+test_that("1 exo construct; > 7 endo constructs; fails",
+          expect_error(generateData(dgp_1exo_error)))
 
 ### More than 5 exogenous construct --------------------------------------------
 
@@ -275,8 +275,5 @@ eta1 =~ 0.7*y71 + 0.8*y72
 eta2 =~ 0.7*y81 + 0.8*y82
 "
 
-test_that("1 exo construct; > 7 endo constructs; fails") {
-  expect_error(generateData(dgp_5exo_error))
-}
-
-
+test_that("1 exo construct; > 7 endo constructs; fails",
+          expect_error(generateData(dgp_5exo_error)))
