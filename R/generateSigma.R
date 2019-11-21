@@ -26,12 +26,48 @@ generateSigma <- function(
   .handle_negative_definite <- match.arg(.handle_negative_definite)
 
   ## Get relevant objects
-  model     <- cSEM::parseModel(.model)
-  con_type  <- model$construct_type
-  Lambda    <- t(model$measurement)
-  Theta     <- model$error_cor
+  model       <- cSEM::parseModel(.model)
+  con_type    <- model$construct_type
+  vars_exo    <- model$cons_exo
+  vars_endo   <- model$cons_endo
+  path_matrix <- model$structural2
+  # Loadings
+  Lambda      <- t(model$measurement)
+  # Measurement errors
+  Theta       <- model$error_cor
+  # Path from exogenous to endogenous
+  Gamma       <- path_matrix[vars_endo, vars_exo, drop = FALSE]
+  # Path from endogenous to endogenous
+  B           <- path_matrix[vars_endo, vars_endo, drop = FALSE]
+  # Correlation between exogenous (Phi)
+  Phi         <- model$phi
 
-  ## Modify and fill Lambda
+  ### Checks and errors --------------------------------------------------------
+  #   A maximum of 5 exogenous constructs is allowed:
+  #     1. If there is 1 exogenous construct  : a maximum of 7 endogenous constructs is allowed
+  #     2. If there are 2 exogenous constructs: a maximum of 6 endogenous constructs is allowed
+  #     3. If there are 3 exogenous constructs: a maximum of 5 endogenous constructs is allowed
+  #     4. If there are 4 exogenous constructs: a maximum of 4 endogenous constructs is allowed
+  #     5. If there are 5 exogenous constructs: a maximum of 4 endogenous constructs is allowed
+
+  if(length(vars_exo) > 5) {
+    stop("Models containing more than 5 exogenous constructs are not supported.",
+         call. = FALSE)
+  }
+  if(length(vars_endo) > 7) {
+    stop("Models containing more than 7 endogenous constructs are not supported.",
+         call. = FALSE)
+  }
+  if(length(vars_exo) > 2 && length(vars_endo) > 6) {
+    stop("Models containing more than 2 exogenous AND more than 6 endogenous constructs are not supported.",
+         call. = FALSE)
+  }
+  if(length(vars_exo) > 3 && length(vars_endo) > 5) {
+    stop("Models containing more than 3 exogenous AND more than 5 endogenous constructs are not supported.",
+         call. = FALSE)
+  }
+
+  ## Modify and fill Lambda and Theta ------------------------------------------
   for(j in colnames(Lambda)) {
 
     if(con_type[j] == "Composite") {
@@ -87,37 +123,6 @@ generateSigma <- function(
     }
   }
 
-  vars_exo  <- model$cons_exo
-  vars_endo <- model$cons_endo
-
-    if(length(vars_exo) > 5) {
-    stop("Models containing more than 5 exogenous constructs are not supported.", call. = FALSE)
-    }
-  if(length(vars_exo) > 3 && length(vars_exo) > 5) {
-    stop("Models containing more than 3 exogenous AND more than 5 endogenous constructs are not supported.", call. = FALSE)
-  }
-  if(length(vars_exo) > 2 && length(vars_exo) > 6) {
-    stop("Models containing more than 2 exogenous AND more than 6 endogenous constructs are not supported.", call. = FALSE)
-  }
-  if(length(vars_exo) > 7) {
-    stop("Models containing more than 7 endogenous constructs are not supported.", call. = FALSE)
-  }
-
-
-  # Get Path Coefficients
-  path_matrix <- model$structural2
-
-  # Get Gamma and B matrix
-  gamma <- path_matrix[vars_endo, vars_exo]
-  beta  <- path_matrix[vars_endo, vars_endo]
-
-
-
-  # Get the Correlation between the exogenous constructs
-  phi_matrix <- model$phi
-
-
-
   if(any(model$construct_order == "Second order")) {
     ## Second order model
     vars_2nd <- model$vars_2nd
@@ -150,47 +155,25 @@ generateSigma <- function(
 
     Theta  <- Theta[selector1, selector1, drop = FALSE]
 
-    ## Construct vcv
-    path_matrix2 <- path_matrix[!(rownames(path_matrix) %in% vars_attached_to_2nd), !(rownames(path_matrix) %in% vars_attached_to_2nd)]
+    vcv_construct_inner <- generateConstructCor(.Gamma = Gamma, .B = B, .Phi = Phi)
 
-    # Insert the Defined Path Coefficients
-    gamma[1:ncol(path_matrix2), 1:nrow(path_matrix2)] <- path_matrix2
-
-    # Add corrleation between exogenous constructs to gamma
-    phi_matrix <- phi_matrix[!(rownames(phi_matrix) %in% vars_attached_to_2nd),
-                             !(colnames(phi_matrix) %in% vars_attached_to_2nd), drop = FALSE]
-
-    if(nrow(phi_matrix) > 0) {
-      phi_matrix[upper.tri(phi_matrix, diag = TRUE)] <- 0
-      gamma[1:nrow(phi_matrix), 1:ncol(phi_matrix)] <- phi_matrix
-    }
-
-    vcv_inner <- generateConstructCor(.structural = path_matrix2, .gamma = gamma)
-
-    vcv_matrix <- Lambda_inner[colnames(Lambda), rownames(vcv_inner)] %*%
-      vcv_inner %*% t(Lambda_inner[colnames(Lambda), rownames(vcv_inner)]) +
+    vcv_construct <- Lambda_inner[colnames(Lambda), rownames(vcv_construct_inner)] %*%
+      vcv_construct_inner %*% t(Lambda_inner[colnames(Lambda), rownames(vcv_construct_inner)]) +
       Theta_inner[colnames(Lambda), colnames(Lambda)]
 
-    # # Combine the covariance matrix with the correlation matrix between the
-    # # exogenous variables
-    # phi_matrix <- phi_matrix[!(rownames(phi_matrix) %in% vars_attached_to_2nd), !(colnames(phi_matrix) %in% vars_attached_to_2nd), drop = FALSE]
-    # vcv_matrix[1:nrow(phi_matrix), 1:ncol(phi_matrix)] <- phi_matrix
-
   } else {
-
-    # Compute the Covariance matrix between the endogenous and between the endogenous
-    # and the exogenous constructs
-    vcv_matrix <- generateConstructCor(.gamma = gamma, .beta = beta, .phi = phi_matrix)
+    # Compute the construct correlation matrix
+    vcv_construct <- generateConstructCor(.Gamma = Gamma, .B = B, .Phi = Phi)
 
   }
 
-  # Compute the indicator correlation matrix
-  indicator_cor <- Lambda %*% vcv_matrix %*% t(Lambda) + Theta
+  # Compute the indicator correlation matrix (Sigma)
+  Sigma <- Lambda %*% vcv_construct %*% t(Lambda) + Theta
 
-  indicator_cor[lower.tri(indicator_cor)] <- t(indicator_cor)[lower.tri(indicator_cor)]
+  Sigma[lower.tri(Sigma)] <- t(Sigma)[lower.tri(Sigma)]
 
   # Check if semi-positve definite
-  if (!matrixcalc::is.positive.semi.definite(indicator_cor)) {
+  if (!matrixcalc::is.positive.semi.definite(Sigma)) {
     if(.handle_negative_definite %in% c("drop", "set_NA")) {
       NA
     } else if(.handle_negative_definite == "stop") {
@@ -198,6 +181,6 @@ generateSigma <- function(
            call. = FALSE)
     }
   } else {
-    indicator_cor
+    Sigma
   }
 }

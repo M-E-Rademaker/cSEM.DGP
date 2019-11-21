@@ -45,18 +45,43 @@ Generate data based on the parameters of a structural equation model
 in \link[lavaan:model.syntax]{lavaan model syntax}.
 }
 \details{
-Generate data for structural equation models including up to 8 constructs. Generation
-is based on parameter values given in \href{http://lavaan.ugent.be/tutorial/syntax1.html}{lavaan model syntax}.
+Generate data for structural equation models including up to 8 constructs. To be precise,
+we support a maximum of 5 exogenous constructs. Depending on the
+number of exogenous constructs the following number of endogenous constructs
+is allowed:
+\enumerate{
+\item{If there is 1 exogenous construct  : a maximum of 7 endogenous constructs is allowed}
+\item{If there are 2 exogenous constructs: a maximum of 6 endogenous constructs is allowed}
+\item{If there are 3 exogenous constructs: a maximum of 5 endogenous constructs is allowed}
+\item{If there are 4 exogenous constructs: a maximum of 4 endogenous constructs is allowed}
+\item{If there are 5 exogenous constructs: a maximum of 4 endogenous constructs is allowed}
+}
+The reason for the limitation is that data is generated such that
+the model-implied variances of the constructs are always unity. Since
+the model-implied construct covariance matrix is a complex function
+of the structural residual variances which are in turn a complex function
+of the path coefficients. Since for a given number of constructs the number of
+possible model specifications grows rapidly, we solved the variance equations
+symbolically as a function of the path coefficients in Mathematica.
+With more than 8 constructs the size of these symbolic representation becomes
+computationally infeasible.
+
+Generation is based on parameter values given in \href{http://lavaan.ugent.be/tutorial/syntax1.html}{lavaan model syntax}.
 Currently, linear models and models containing second order constructs are
 supported. Supplying a model containing nonlinear terms causes an error.
 
-For the structural model equations (\code{~}) values are interpreted as path coeffcients. For measurement
-model equations values are taken to be loadings if the concept is modeled as a
-common factor (\code{=~}). If the concept is modeled as a composite (\code{<~}) values are
-interpreted as (unscaled) weights!
-In latter case, indicators are allowed to be arbitrarily correlated. Hence,
-the correlation between indicators (\code{~~}) needs to be set as well.
-See the examples below.
+For the structural model equations (\code{~}) values are interpreted as path coefficients.
+For measurement model equations values are taken to be loadings if the
+concept is modeled as a common factor (\code{=~}). If the concept is modeled as
+a composite (\code{<~}) values are interpreted as (unscaled) weights!
+In the latter case, indicators are allowed to be arbitrarily correlated. Hence,
+the correlation between indicators needs to be set as well. Indicator correlations
+measurement error correlations, and correlations between exogenous constructs
+are set using the (\code{~~}) operator. Note that when writing, for instance, \code{x1 ~~ 0.2*x2}
+(where \code{x1} and \code{x2} are indicators of some construct \code{eta1}), the interpretation
+depends on whether \code{eta1} is modeled as a composite or a common factor.
+In the former case \code{x1 ~~ 0.2*x2} is a correlation between indicators, in the
+latter case it is interpreted as a measurement error correlation.
 
 In addition to supplying numeric values, variable values for parameters are allowed.
 To achieve this, the package makes use of \href{http://lavaan.ugent.be/}{lavaan}'s

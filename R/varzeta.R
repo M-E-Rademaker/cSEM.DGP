@@ -7,7 +7,6 @@ varzeta1 <- function(beta = NULL, gamma = NULL, phi = NULL){
    2*gamma[1,4]*gamma[1,5]*phi[4,5]
    }
 
-
 varzeta2 <- function(beta = NULL, gamma = NULL, phi = NULL){
   1 - beta[2,1]^2 - gamma[2,1]^2 - gamma[2,2]^2 - gamma[2,3]^2 - gamma[2,4]^2 -
   gamma[2,5]^2 -
@@ -1127,7 +1126,6 @@ varzeta6 <- function(beta = NULL, gamma = NULL, phi = NULL){
                                     beta[6,5]*gamma[1,2]*gamma[5,1]*phi[1,2] + beta[6,5]*gamma[1,1]*gamma[5,2]*phi[1,2] +
                                     gamma[1,2]*gamma[6,1]*phi[1,2] + gamma[1,1]*gamma[6,2]*phi[1,2]))
 }
-
 
 varzeta7 <- function(beta = NULL, gamma = NULL, phi = NULL){
    1 - beta[7,1]^2 - beta[7,2]^2 - beta[7,3]^2 -2*beta[3,1]*beta[4,1]*beta[7,3]*beta[7,4] -

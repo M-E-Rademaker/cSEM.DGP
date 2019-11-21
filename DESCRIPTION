@@ -1,7 +1,7 @@
 Package: cSEM.DGP
 Title: Generate data for structural equation models
-Version: 0.1.0
-Date: 2019-04-24
+Version: 0.0.0.9000
+Date: 2019-11-21
 Authors@R: c(person(given = "Manuel", family = "Rademaker",
                     role  = c("aut", "cre"),
                     email = "manuel.rademaker@uni-wuerzburg.de",
@@ -34,3 +34,5 @@ Imports:
 Remotes: M-E-Rademaker/cSEM
 RoxygenNote: 6.1.1
 Roxygen: list(markdown = TRUE, roclets = c("rd", "namespace", "collate"))
+Suggests: 
+    testthat (>= 2.1.0)

@@ -2,21 +2,23 @@
 % Please edit documentation in R/generateConstructCor.R
 \name{generateConstructCor}
 \alias{generateConstructCor}
-\title{Compute construct correlation matrix}
+\title{Internal: Compute the construct correlation matrix}
 \usage{
-generateConstructCor(.beta = NULL, .gamma = NULL, .phi = NULL)
+generateConstructCor(.Gamma = NULL, .B = NULL, .Phi = NULL)
 }
 \arguments{
-\item{.gamma}{A (8 x 8) matrix containing the path coefficients.}
+\item{.Gamma}{A matrix containing the path coefficients from the exogenous on
+the endogenous constructs.}
 
-\item{.structural}{A matrix mimicking the structural relationship
-between constructs. Up to 8 constructs are supported.}
+\item{.B}{A matrix containing the path coefficients from the endogenous on
+the endogenous constructs.}
+
+\item{.Phi}{A symmetric matrix of correlations between exogenous constructs}
 }
 \value{
-A (8 x 8) matrix of construct correlations.
+A matrix of construct correlations.
 }
 \description{
-Calculate the construct correlation matrix. Currently, there
-is a limit of eigth constructs.
+Calculate the construct correlation matrix.
 }
 \keyword{internal}

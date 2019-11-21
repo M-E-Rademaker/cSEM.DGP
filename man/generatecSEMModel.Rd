@@ -2,7 +2,7 @@
 % Please edit documentation in R/generatecSEMModel.r
 \name{generatecSEMModel}
 \alias{generatecSEMModel}
-\title{Generate cSEMModels}
+\title{Internal: generate cSEMModels}
 \usage{
 generatecSEMModel(.model, ...)
 }
@@ -10,7 +10,7 @@ generatecSEMModel(.model, ...)
 \item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax} possibly
 containing labels.}
 
-\item{...}{\code{"name" = values} pairs. \code{"name"} is a character value giving the
+\item{...}{\code{"name" = values} pairs. \code{"name"} is a character string giving the
 label used for the parameter of interest. \code{values} is a numeric vector of
 values to use for the paramter given by \code{"name"}.}
 }

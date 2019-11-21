@@ -1,4 +1,4 @@
-#' Generate cSEMModels
+#' Internal: generate cSEMModels
 #'
 #' Generate all possible [cSEMModel][cSEM::csem_model]s.
 #'
@@ -6,7 +6,7 @@
 #'
 #' @param .model A model in [lavaan model syntax][lavaan::model.syntax] possibly
 #'   containing labels.
-#' @param ... `"name" = values` pairs. `"name"` is a character value giving the
+#' @param ... `"name" = values` pairs. `"name"` is a character string giving the
 #'   label used for the parameter of interest. `values` is a numeric vector of
 #'   values to use for the paramter given by `"name"`.
 #
