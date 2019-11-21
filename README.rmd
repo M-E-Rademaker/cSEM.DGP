@@ -16,7 +16,7 @@ output: github_document
 devtools::install_github("M-E-Rademaker/cSEM.DGP")
 ```
 Note: requires a development version of [cSEM](https://github.com/M-E-Rademaker/cSEM) 
-      that includes commits done before 12.09.2019.
+      that includes commits done before 21.11.2019.
       
 If you have an older version. Run:
 ```{r, eval = FALSE}
@@ -46,13 +46,20 @@ require(cSEM.DGP)
 
 model <- "
 # Structural model
-eta2 ~ 0.6*eta1
-eta3 ~ 0.4*eta1 + 0.35*eta2
+eta3 ~ 0.6*eta1 + 0.4*eta2
+eta4 ~ 0.4*eta1 + 0.35*eta3
 
 # Measurement model
 eta1 =~ 0.8*y11 + 0.9*y12 + 0.8*y13
-eta2 =~ 0.7*y21 + 0.7*y22 + 0.9*y23
-eta3 =~ 0.9*y31 + 0.8*y32 + 0.7*y33
+eta2 =~ 0.7*y21 + 0.7*y22 
+eta3 =~ 0.9*y31 + 0.8*y32
+eta4 =~ 0.9*y41 + 0.8*y42
+
+# Measurment error correlation
+y11 ~~ 0.2*y12
+
+# Correlation between exogenous constructs
+eta1 ~~ 0.5*eta2
 "
 
 dat <- generateData(model, .return_type = "cor")
