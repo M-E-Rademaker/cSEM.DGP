@@ -109,5 +109,7 @@ dat <- generateData(dgp_2ndorder, .return_type = "data.frame", .empirical = TRUE
 dat[1:5, ]
 
 ## Estimate using cSEM
+require(cSEM)
+
 aa <- cSEM::csem(dat, dgp_2ndorder)
-cSEM::summarize(aa,) ## parameters estimates are identical to the DGP
+cSEM::summarize(aa) ## parameters estimates are identical to the DGP

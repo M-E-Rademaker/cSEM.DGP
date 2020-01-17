@@ -72,12 +72,12 @@ supported. Supplying a model containing nonlinear terms causes an error.
 
 For the structural model equations (\code{~}) values are interpreted as path coefficients.
 For measurement model equations values are taken to be loadings if the
-concept is modeled as a common factor (\code{=~}). If the concept is modeled as
-a composite (\code{<~}) values are interpreted as (unscaled) weights!
+concept is modeled as a common factor (\verb{=~}). If the concept is modeled as
+a composite (\verb{<~}) values are interpreted as (unscaled) weights!
 In the latter case, indicators are allowed to be arbitrarily correlated. Hence,
 the correlation between indicators needs to be set as well. Indicator correlations
 measurement error correlations, and correlations between exogenous constructs
-are set using the (\code{~~}) operator. Note that when writing, for instance, \code{x1 ~~ 0.2*x2}
+are set using the (\verb{~~}) operator. Note that when writing, for instance, \code{x1 ~~ 0.2*x2}
 (where \code{x1} and \code{x2} are indicators of some construct \code{eta1}), the interpretation
 depends on whether \code{eta1} is modeled as a composite or a common factor.
 In the former case \code{x1 ~~ 0.2*x2} is a correlation between indicators, in the
@@ -208,6 +208,8 @@ dat <- generateData(dgp_2ndorder, .return_type = "data.frame", .empirical = TRUE
 dat[1:5, ]
 
 ## Estimate using cSEM
+require(cSEM)
+
 aa <- cSEM::csem(dat, dgp_2ndorder)
-cSEM::summarize(aa,) ## parameters estimates are identical to the DGP
+cSEM::summarize(aa) ## parameters estimates are identical to the DGP
 }
