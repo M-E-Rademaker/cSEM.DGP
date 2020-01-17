@@ -11,18 +11,19 @@ output: github_document
 [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/M-E-Rademaker/cSEM.DGP?branch=master&svg=true)](https://ci.appveyor.com/project/M-E-Rademaker/csem-dgp)
 
 ## Installation:
+The package is available on [CRAN](https://cran.r-project.org/):
+```{r, eval = FALSE}
+# install.packages("devtools")
+install.packages("cSEM.DGP")
+```
+To install the development version us:
 ```{r, eval = FALSE}
 # install.packages("devtools")
 devtools::install_github("M-E-Rademaker/cSEM.DGP")
 ```
-Note: requires a development version of [cSEM](https://github.com/M-E-Rademaker/cSEM) 
-      that includes commits done before 21.11.2019.
-      
-If you have an older version. Run:
-```{r, eval = FALSE}
-# install.packages("devtools")
-devtools::install_github("M-E-Rademaker/cSEM")
-```
+
+## Getting started
+The best place to get started is the [cSEM.DGP website](https://m-e-rademaker.github.io/cSEM.DGP/).
 
 ## Purpose
 Generate data for structural equation models including up to eight constructs. 
@@ -34,6 +35,8 @@ labeling capabilities.
 Users may replace a given parameter in, i.e. the structural model
 by a symbolic name and assign a vector of values to that name. These values will be used
 to generate data for all possible combinations of these values with the remaining fixed parameters.
+
+The package works nicely in combination with the [cSEM package](https://m-e-rademaker.github.io/cSEM/).
 
 ## Examples
 ### Without variable parameters

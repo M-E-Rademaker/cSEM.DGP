@@ -12,21 +12,24 @@ status](https://ci.appveyor.com/api/projects/status/github/M-E-Rademaker/cSEM.DG
 
 ## Installation:
 
+The package is available on [CRAN](https://cran.r-project.org/):
+
+``` r
+# install.packages("devtools")
+install.packages("cSEM.DGP")
+```
+
+To install the development version us:
+
 ``` r
 # install.packages("devtools")
 devtools::install_github("M-E-Rademaker/cSEM.DGP")
 ```
 
-Note: requires a development version of
-[cSEM](https://github.com/M-E-Rademaker/cSEM) that includes commits done
-before 21.11.2019.
+## Getting started
 
-If you have an older version. Run:
-
-``` r
-# install.packages("devtools")
-devtools::install_github("M-E-Rademaker/cSEM")
-```
+The best place to get started is the [cSEM.DGP
+website](https://m-e-rademaker.github.io/cSEM.DGP/).
 
 ## Purpose
 
@@ -41,6 +44,9 @@ may replace a given parameter in, i.e. the structural model by a
 symbolic name and assign a vector of values to that name. These values
 will be used to generate data for all possible combinations of these
 values with the remaining fixed parameters.
+
+The package works nicely in combination with the [cSEM
+package](https://m-e-rademaker.github.io/cSEM/).
 
 ## Examples
 
