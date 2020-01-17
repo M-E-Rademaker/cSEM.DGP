@@ -8,7 +8,8 @@ Authors@R: c(person(given = "Manuel", family = "Rademaker",
                     comment = c(ORCID = "0000-0002-8902-3561")),
              person(given = "Tamara", family = "Schamberger",
                     role  = c("aut"),
-                    email = "tamara.schamberger@uni-wuerzburg.de"))
+                    email = "tamara.schamberger@uni-wuerzburg.de",
+                    comment = c(ORCID = "0000-0002-7845-784X")))
 Maintainer: Manuel Rademaker <manuel.rademaker@uni-wuerzburg.de>
 Depends: R (>= 3.5.0)
 Description: Generate data for structural equation models including up to eight constructs. Generation

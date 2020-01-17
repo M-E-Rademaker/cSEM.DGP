@@ -28,7 +28,7 @@ Useful links:
 
 Authors:
 \itemize{
-  \item Tamara Schamberger \email{tamara.schamberger@uni-wuerzburg.de}
+  \item Tamara Schamberger \email{tamara.schamberger@uni-wuerzburg.de} (\href{https://orcid.org/0000-0002-7845-784X}{ORCID})
 }
 
 }
