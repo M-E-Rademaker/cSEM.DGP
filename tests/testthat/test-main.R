@@ -233,18 +233,7 @@ test_that("3 exo constructs; <= 7 endo constructs; 2ndorder; works", {
 })
 
 ### 4 Construct correlations are supplied instead of a structural model --------
-## 4.1 Only measurement equation
-dgp_only_correlations1 <- "
-# Composite model
-IMAG =~ 0.7*imag1 + 0.8*imag2 + 0.9*imag3
-"
-pop_loadings      <- c(0.7, 0.8, 0.9)
-
-dat_only_correlations1 <- generateData(dgp_only_correlations1, .empirical = TRUE)
-# out <- csem(dat_only_correlations1, dgp_only_correlations1)
-
-## 4.2. Two measurement equations and correlation between constructs supplied
-dgp_only_correlations2 <- "
+dgp_only_correlations <- "
 # Construct correlations
 EXPE ~~ 0.3*IMAG
 
@@ -260,8 +249,8 @@ pop_loadings      <- c(0.7, 0.8, 0.7, 0.8)
 pop_construct_cor <- 0.3
 pop_indicator_cor <- 0.4
 
-dat_only_correlations2 <- generateData(dgp_only_correlations2, .empirical = TRUE)
-out <- csem(dat_only_correlations2, dgp_only_correlations2,
+dat_only_correlations <- generateData(dgp_only_correlations, .empirical = TRUE)
+out <- csem(dat_only_correlations, dgp_only_correlations,
             .PLS_weight_scheme_inner = "centroid")
 
 loadings      <- comparecSEM(out, .what = "Loading_estimates", pop_loadings)
