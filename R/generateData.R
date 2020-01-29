@@ -3,8 +3,10 @@
 #' Generate data based on the parameters of a structural equation model
 #' in [lavaan model syntax][lavaan::model.syntax].
 #'
-#' Generate data for structural equation models including up to 8 constructs. To be precise,
-#' we support a maximum of 5 exogenous constructs. Depending on the
+#' Generate data for structural equation models including up to 8 constructs
+#' if a structural model is given or an unlimited number if only the correlation
+#' between constructs is needed. To be precise, if users specify a structural
+#' model we support a maximum of 5 exogenous constructs. Depending on the
 #' number of exogenous constructs the following number of endogenous constructs
 #' is allowed:
 #' \enumerate{
@@ -18,7 +20,8 @@
 #' the model-implied variances of the constructs are always unity. Since
 #' the model-implied construct covariance matrix is a complex function
 #' of the structural residual variances which are in turn a complex function
-#' of the path coefficients. Since for a given number of constructs the number of
+#' of the path coefficients the equation for each construct variance grows massively
+#' with each additional construct added. Since for a given number of constructs the number of
 #' possible model specifications grows rapidly, we solved the variance equations
 #' symbolically as a function of the path coefficients in Mathematica.
 #' With more than 8 constructs the size of these symbolic representation becomes

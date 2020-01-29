@@ -25,6 +25,10 @@ generatecSEMModel <- function(
 
   xx  <- cSEM::parseModel(.model)
 
+  if(is.null(xx$measurement2)) {
+    stop("No population values given. Please specify all population values", call. = FALSE)
+  }
+
   if(xx$model_type == "Nonlinear") {
     stop("Currently, models containing nonlinear terms are not supported.", call. = FALSE)
   }

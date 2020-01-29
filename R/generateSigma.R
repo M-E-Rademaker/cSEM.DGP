@@ -8,8 +8,7 @@
 #'  .handle_negative_definite = c("stop", "drop", "set_NA")
 #'  )
 #'
-#' @param .model A model in [lavaan model syntax][lavaan::model.syntax] or a
-#'   [cSEMModel][cSEM::csem_model].
+#' @param .model A model generated using [generatecSEMModel()].
 #' @param .handle_negative_definite Character string. How should negative definite
 #'   indicator correlation matrices be handled? One of `"stop"`, `"drop"` or `"set_NA"`
 #'   in which case an `NA` is produced. Defaults to `"stop"`.
@@ -26,45 +25,49 @@ generateSigma <- function(
   .handle_negative_definite <- match.arg(.handle_negative_definite)
 
   ## Get relevant objects
-  model       <- cSEM::parseModel(.model)
+  model       <- .model
   con_type    <- model$construct_type
-  vars_exo    <- model$cons_exo
-  vars_endo   <- model$cons_endo
-  path_matrix <- model$structural2
   # Loadings
   Lambda      <- t(model$measurement)
   # Measurement errors
   Theta       <- model$error_cor
-  # Path from exogenous to endogenous
-  Gamma       <- path_matrix[vars_endo, vars_exo, drop = FALSE]
-  # Path from endogenous to endogenous
-  B           <- path_matrix[vars_endo, vars_endo, drop = FALSE]
-  # Correlation between exogenous (Phi)
+  # Correlation between exogenous (Phi) (if correlation between all constructs
+  # is supplied all constructs are "exogenous)
   Phi         <- model$phi
 
-  ### Checks and errors --------------------------------------------------------
-  #   A maximum of 5 exogenous constructs is allowed:
-  #     1. If there is 1 exogenous construct  : a maximum of 7 endogenous constructs is allowed
-  #     2. If there are 2 exogenous constructs: a maximum of 6 endogenous constructs is allowed
-  #     3. If there are 3 exogenous constructs: a maximum of 5 endogenous constructs is allowed
-  #     4. If there are 4 exogenous constructs: a maximum of 4 endogenous constructs is allowed
-  #     5. If there are 5 exogenous constructs: a maximum of 4 endogenous constructs is allowed
+  if(!all(model$structural == 0)) {
+    vars_exo    <- model$cons_exo
+    vars_endo   <- model$cons_endo
+    path_matrix <- model$structural2
+    # Path from exogenous to endogenous
+    Gamma       <- path_matrix[vars_endo, vars_exo, drop = FALSE]
+    # Path from endogenous to endogenous
+    B           <- path_matrix[vars_endo, vars_endo, drop = FALSE]
 
-  if(length(vars_exo) > 5) {
-    stop("Models containing more than 5 exogenous constructs are not supported.",
-         call. = FALSE)
-  }
-  if(length(vars_endo) > 7) {
-    stop("Models containing more than 7 endogenous constructs are not supported.",
-         call. = FALSE)
-  }
-  if(length(vars_exo) > 2 && length(vars_endo) > 6) {
-    stop("Models containing more than 2 exogenous AND more than 6 endogenous constructs are not supported.",
-         call. = FALSE)
-  }
-  if(length(vars_exo) > 3 && length(vars_endo) > 5) {
-    stop("Models containing more than 3 exogenous AND more than 5 endogenous constructs are not supported.",
-         call. = FALSE)
+    ### Checks and errors --------------------------------------------------------
+    #   A maximum of 5 exogenous constructs is allowed:
+    #     1. If there is 1 exogenous construct  : a maximum of 7 endogenous constructs is allowed
+    #     2. If there are 2 exogenous constructs: a maximum of 6 endogenous constructs is allowed
+    #     3. If there are 3 exogenous constructs: a maximum of 5 endogenous constructs is allowed
+    #     4. If there are 4 exogenous constructs: a maximum of 4 endogenous constructs is allowed
+    #     5. If there are 5 exogenous constructs: a maximum of 4 endogenous constructs is allowed
+
+    if(length(vars_exo) > 5) {
+      stop("Models containing more than 5 exogenous constructs are not supported.",
+           call. = FALSE)
+    }
+    if(length(vars_endo) > 7) {
+      stop("Models containing more than 7 endogenous constructs are not supported.",
+           call. = FALSE)
+    }
+    if(length(vars_exo) > 2 && length(vars_endo) > 6) {
+      stop("Models containing more than 2 exogenous AND more than 6 endogenous constructs are not supported.",
+           call. = FALSE)
+    }
+    if(length(vars_exo) > 3 && length(vars_endo) > 5) {
+      stop("Models containing more than 3 exogenous AND more than 5 endogenous constructs are not supported.",
+           call. = FALSE)
+    }
   }
 
   ## Modify and fill Lambda and Theta ------------------------------------------
@@ -162,9 +165,13 @@ generateSigma <- function(
       Theta_inner[colnames(Lambda), colnames(Lambda)]
 
   } else {
-    # Compute the construct correlation matrix
-    vcv_construct <- generateConstructCor(.Gamma = Gamma, .B = B, .Phi = Phi)
-
+    # Compute the construct correlation matrix if a structural model has been
+    # supplied
+    if(all(model$structural == 0)) {
+      vcv_construct <- Phi
+    } else {
+      vcv_construct <- generateConstructCor(.Gamma = Gamma, .B = B, .Phi = Phi)
+    }
   }
 
   # Compute the indicator correlation matrix (Sigma)

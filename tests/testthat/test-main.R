@@ -5,7 +5,9 @@
 ################################################################################
 ## What is allowed:
 #
-#   A maximum of 5 exogenous constructs is allowed:
+#   A maximum of 5 exogenous constructs is allowed if a structural model is supplied;
+#   otherwise an unlimited number is possible as long as all construct correlations
+#   are supplied by the user:
 #     1. If there is 1 exogenous construct  : a maximum of 7 endogenous constructs is allowed
 #     2. If there are 2 exogenous constructs: a maximum of 6 endogenous constructs is allowed
 #     3. If there are 3 exogenous constructs: a maximum of 5 endogenous constructs is allowed
@@ -124,7 +126,7 @@ test_that("1 exo construct; <= 7 endo constructs; random order in model; works",
 })
 
 
-### 3 exogenous construct and <= 5 endogenous constructs------------------------
+### 2 exogenous construct and <= 5 endogenous constructs------------------------
 dgp_3exo_ok <- " # less than 5 endogenous; random order to check ordering
 eta2 ~ 0.4*eta1 + 0.3*xi1
 eta1 ~ 0.5*xi1 + 0.4*xi2 + 0.25*xi3
@@ -230,10 +232,52 @@ test_that("3 exo constructs; <= 7 endo constructs; 2ndorder; works", {
   expect_equal(exo_construct_cor$Estimate, exo_construct_cor$Pop_value)
 })
 
+### 4 Construct correlations are supplied instead of a structural model --------
+## 4.1 Only measurement equation
+dgp_only_correlations1 <- "
+# Composite model
+IMAG =~ 0.7*imag1 + 0.8*imag2 + 0.9*imag3
+"
+pop_loadings      <- c(0.7, 0.8, 0.9)
+
+dat_only_correlations1 <- generateData(dgp_only_correlations1, .empirical = TRUE)
+# out <- csem(dat_only_correlations1, dgp_only_correlations1)
+
+## 4.2. Two measurement equations and correlation between constructs supplied
+dgp_only_correlations2 <- "
+# Construct correlations
+EXPE ~~ 0.3*IMAG
+
+# Composite model
+EXPE =~ 0.7*expe1 + 0.8*expe2
+IMAG <~ 0.7*imag1 + 0.9*imag2
+
+# Indicator correlation
+imag1 ~~ 0.4*imag2
+"
+
+pop_loadings      <- c(0.7, 0.8, 0.7, 0.8)
+pop_construct_cor <- 0.3
+pop_indicator_cor <- 0.4
+
+dat_only_correlations2 <- generateData(dgp_only_correlations2, .empirical = TRUE)
+out <- csem(dat_only_correlations2, dgp_only_correlations2,
+            .PLS_weight_scheme_inner = "centroid")
+
+loadings      <- comparecSEM(out, .what = "Loading_estimates", pop_loadings)
+construct_cor <- comparecSEM(out, .what = "Exo_construct_correlation", pop_construct_cor)
+indicator_cor <- comparecSEM(out, .what = "Indicator_correlation", pop_indicator_cor)
+
+test_that("Correlation instead of structural model works", {
+  expect_equal(loadings$Estimate, loadings$Pop_value)
+  expect_equal(construct_cor$Estimate, construct_cor$Pop_value)
+  expect_equal(indicator_cor$Estimate, indicator_cor$Pop_value)
+})
+
 #===============================================================================
 ### Data generating processes that cSEM.DGP can not handle ---------------------
 #===============================================================================
-### 1 Exogenous construct and > 7 endogenous constructs-------------------------
+### 1 Exogenous construct and > 7 endogenous constructs ------------------------
 
 dgp_1exo_error <- " # more than 7 endogenous constructs
 eta1 ~ 0.4*xi1

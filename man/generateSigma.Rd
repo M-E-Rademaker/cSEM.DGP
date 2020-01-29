@@ -10,8 +10,7 @@ generateSigma(
  )
 }
 \arguments{
-\item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax} or a
-\link[cSEM:csem_model]{cSEMModel}.}
+\item{.model}{A model generated using \code{\link[=generatecSEMModel]{generatecSEMModel()}}.}
 
 \item{.handle_negative_definite}{Character string. How should negative definite
 indicator correlation matrices be handled? One of \code{"stop"}, \code{"drop"} or \code{"set_NA"}
