@@ -12,14 +12,26 @@ status](https://ci.appveyor.com/api/projects/status/github/M-E-Rademaker/cSEM.DG
 
 ## Installation:
 
-The package is available on [CRAN](https://cran.r-project.org/):
+<!-- The package is available on [CRAN](https://cran.r-project.org/): -->
+
+<!-- ```{r, eval = FALSE} -->
+
+<!-- # install.packages("devtools") -->
+
+<!-- install.packages("cSEM.DGP") -->
+
+<!-- ``` -->
+
+The package requires the development version of
+[cSEM](https://github.com/M-E-Rademaker/cSEM) (version 0.1.0:9000 as
+Feb. 2020). To install the development version use:
 
 ``` r
 # install.packages("devtools")
-install.packages("cSEM.DGP")
+devtools::install_github("M-E-Rademaker/cSEM")
 ```
 
-To install the development version us:
+To install the development version of `cSEM.DGP` use:
 
 ``` r
 # install.packages("devtools")
