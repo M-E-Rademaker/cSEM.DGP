@@ -104,6 +104,7 @@ generateData <- function(
   handle_negative_definite <- match.arg(.handle_negative_definite)
   return_type              <- match.arg(.return_type)
 
+
   ## Get the models
   model_list <- generatecSEMModel(.model, ...)
 
