@@ -96,6 +96,8 @@ generateData <- function(
   .handle_negative_definite = c("stop", "drop", "set_NA"),
   .return_type              = c("data.frame", "matrix", "cor"),
   .N                        = 200,
+  .skewness                 = NULL,
+  .kurtosis                 = NULL,
   ...
   ) {
   ## Match arguments
@@ -131,7 +133,7 @@ generateData <- function(
         if(anyNA(x)) {
           NA
         } else {
-          out <- MASS::mvrnorm(.N, mu = rep(0, nrow(x)), Sigma = x, empirical = .empirical)
+          out <- simulateData(.info_frame = info_frame, .skewness = .skewness, .kurtosis = .kurtosis)
           if(return_type == "data.frame") {
             out <- as.data.frame(out)
           }
@@ -142,7 +144,7 @@ generateData <- function(
       if(anyNA(info_frame)) {
         NA
       } else {
-        info_frame <- MASS::mvrnorm(.N, mu = rep(0, nrow(info_frame)), Sigma = info_frame, empirical = .empirical)
+        info_frame <- simulateData(.info_frame = info_frame, .skewness = .skewness, .kurtosis = .kurtosis)
         if(return_type == "data.frame") {
           info_frame <- as.data.frame(info_frame)
         }
@@ -153,3 +155,4 @@ generateData <- function(
     info_frame
   }
 }
+
