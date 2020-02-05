@@ -43,8 +43,8 @@ simulateData <- function(.info_frame, .skewness, .kurtosis, .N, .empirical,
       if(.handle_negative_definite %in% c("drop", "set_NA")) {
         NA
       } else if(.handle_negative_definite == "stop") {
-        stop("Correlation matrix for the generation of the nonnormal data is not semi-positive definite.
-             Please check your combinations of values for skewness and kurtosis.",
+        stop("Correlation matrix for the generation of the nonnormal data is not semi-positive definite.",
+        " Please check your combinations of values for skewness and kurtosis.",
              call. = FALSE)
       }
     } else {
@@ -86,7 +86,8 @@ simulateData <- function(.info_frame, .skewness, .kurtosis, .N, .empirical,
     res <- tryCatch(rootSolve::multiroot(coef, start = c(1,0,0), .mom = .mom,
                                maxiter = 100, rtol = 1e-15),
                     warning = function(w){
-                      stop("Please check your combinations of skewness and kurtosis values. Please be aware of that skewness^2 < 0.0629576*kurtosis + 0.0717247 must hold.")
+                      stop("Please check your combinations of skewness and kurtosis values.",
+                      " Please be aware of that skewness^2 < 0.0629576*kurtosis + 0.0717247 must hold.")
                     })
     return(c(-res$root[2], res$root))
   }
