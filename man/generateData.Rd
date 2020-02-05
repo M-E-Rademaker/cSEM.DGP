@@ -10,6 +10,8 @@ generateData(
  .handle_negative_definite = c("stop", "drop", "set_NA"),
  .return_type              = c("data.frame", "matrix", "cor"),
  .N                        = 200,
+ .skewness                 = NULL,
+ .kurtosis                 = NULL,
  ...
  )
 }
@@ -29,6 +31,10 @@ in which case the indicator correlation matrix is returned. Defaults to \code{"d
 
 \item{.N}{Integer. The number of observations to generate. Ignored if
 \code{return.type = "cor"}. Defaults to \code{200}.}
+
+\item{.skewness}{List. List of predefined values for the skewness of the indicators.}
+
+\item{.kurtosis}{List. List of predefined values for the kurtosis of the indicators.}
 
 \item{...}{\code{"name" = vector_of_values} pairs. \code{"name"} is a character string giving the
 label used for the parameter of interest. \code{vector_of_values} is a numeric vector of

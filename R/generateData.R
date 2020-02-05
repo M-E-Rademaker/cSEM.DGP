@@ -63,6 +63,8 @@
 #'  .handle_negative_definite = c("stop", "drop", "set_NA"),
 #'  .return_type              = c("data.frame", "matrix", "cor"),
 #'  .N                        = 200,
+#'  .skewness                 = NULL,
+#'  .kurtosis                 = NULL,
 #'  ...
 #'  )
 #'
@@ -77,6 +79,8 @@
 #'   `return.type = "cor"`. Defaults to `200`.
 #' @param .return_type Character string. One of `"data.frame"`, `"matrix"` or `"cor"`
 #'   in which case the indicator correlation matrix is returned. Defaults to `"data.frame"`.
+#' @param .skewness List. List of predefined values for the skewness of the indicators.
+#' @param .kurtosis List. List of predefined values for the kurtosis of the indicators.
 #' @param ... `"name" = vector_of_values` pairs. `"name"` is a character string giving the
 #'   label used for the parameter of interest. `vector_of_values` is a numeric vector of
 #'   values to use for the paramter given by `"name"`.
@@ -134,7 +138,9 @@ generateData <- function(
         if(anyNA(x)) {
           NA
         } else {
-          out <- simulateData(.info_frame = info_frame, .skewness = .skewness, .kurtosis = .kurtosis, .N = .N, .empirical = .empirical)
+          out <- simulateData(.info_frame = x, .skewness = .skewness,
+                              .kurtosis = .kurtosis, .N = .N, .empirical = .empirical,
+                              .handle_negative_definite = .handle_negative_definite)
           if(return_type == "data.frame") {
             out <- as.data.frame(out)
           }
@@ -145,7 +151,9 @@ generateData <- function(
       if(anyNA(info_frame)) {
         NA
       } else {
-        info_frame <- simulateData(.info_frame = info_frame, .skewness = .skewness, .kurtosis = .kurtosis, .N = .N, .empirical = .empirical)
+        info_frame <- simulateData(.info_frame = info_frame, .skewness = .skewness,
+                                   .kurtosis = .kurtosis, .N = .N, .empirical = .empirical,
+                                   .handle_negative_definite = .handle_negative_definite)
         if(return_type == "data.frame") {
           info_frame <- as.data.frame(info_frame)
         }
