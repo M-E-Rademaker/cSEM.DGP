@@ -134,7 +134,7 @@ generateData <- function(
         if(anyNA(x)) {
           NA
         } else {
-          out <- simulateData(.info_frame = info_frame, .skewness = .skewness, .kurtosis = .kurtosis)
+          out <- simulateData(.info_frame = info_frame, .skewness = .skewness, .kurtosis = .kurtosis, .N = .N, .empirical = .empirical)
           if(return_type == "data.frame") {
             out <- as.data.frame(out)
           }
@@ -145,7 +145,7 @@ generateData <- function(
       if(anyNA(info_frame)) {
         NA
       } else {
-        info_frame <- simulateData(.info_frame = info_frame, .skewness = .skewness, .kurtosis = .kurtosis)
+        info_frame <- simulateData(.info_frame = info_frame, .skewness = .skewness, .kurtosis = .kurtosis, .N = .N, .empirical = .empirical)
         if(return_type == "data.frame") {
           info_frame <- as.data.frame(info_frame)
         }

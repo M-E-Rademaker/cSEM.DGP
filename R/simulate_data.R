@@ -1,4 +1,4 @@
-simulateData <- function(.info_frame, .skewness, .kurtosis){
+simulateData <- function(.info_frame, .skewness, .kurtosis, .N, .empirical){
   if(is.null(.skewness) && is.null(.kurtosis)){
     .info_frame <- MASS::mvrnorm(.N, mu = rep(0, nrow(.info_frame)), Sigma = .info_frame, empirical = .empirical)
     return(.info_frame)
@@ -29,6 +29,7 @@ simulateData <- function(.info_frame, .skewness, .kurtosis){
     }
     cor_dependent <- cor_dependent + t(cor_dependent)
     diag(cor_dependent) <- 1
+
 
     # Generate the standard normal variables with the correlation matrix calculated by the
    # Vale Maurelli approach
