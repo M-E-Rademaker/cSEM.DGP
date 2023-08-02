@@ -1,6 +1,6 @@
 #' Internal: generate cSEMModels
 #'
-#' Generate all possible [cSEMModel][cSEM::csem_model]s.
+#' Generate all possible models
 #'
 #' @usage generatecSEMModel(.model, ...)
 #'
@@ -10,7 +10,7 @@
 #'   label used for the parameter of interest. `values` is a numeric vector of
 #'   values to use for the paramter given by `"name"`.
 #
-#' @return A list of [cSEMModel][cSEM::csem_model]s
+#' @return A list of models
 #'
 #' @keywords internal
 
@@ -23,7 +23,7 @@ generatecSEMModel <- function(
   params <- as.list(list(...))
   param_names <- names(params)
 
-  xx  <- cSEM::parseModel(.model)
+  xx  <- parseModel(.model)
 
   if(is.null(xx$measurement2)) {
     stop("No population values given. Please specify all population values", call. = FALSE)
